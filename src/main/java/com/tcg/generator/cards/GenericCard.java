@@ -4,24 +4,6 @@
  */
 package com.tcg.generator.cards;
 
-import com.tcg.generator.cards.reflect.Card;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tcg.generator.config.ConfigHolder;
-import com.tcg.generator.layouts.CardFont;
-import com.tcg.generator.layouts.CardLayout;
-import com.tcg.generator.layouts.ElementLayout;
-import com.tcg.generator.layouts.ElementMapping;
-import com.tcg.generator.layouts.Resource;
-import com.text.formatted.elements.BoldTextInsert;
-import com.text.formatted.elements.ImageInsert;
-import com.text.formatted.elements.ItalicTextInsert;
-import com.text.formatted.elements.MarkupElement;
-import com.text.formatted.elements.MixedMediaText;
-import com.text.formatted.elements.TextInsert;
-import com.trinary.parse.xml.Formatting;
-import com.trinary.parse.xml.FormattingType;
-
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -29,6 +11,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,6 +25,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tcg.generator.cards.reflect.Card;
+import com.tcg.generator.config.ConfigHolder;
+import com.tcg.generator.layouts.CardFont;
+import com.tcg.generator.layouts.CardLayout;
+import com.tcg.generator.layouts.ElementLayout;
+import com.tcg.generator.layouts.ElementMapping;
+import com.tcg.generator.layouts.Resource;
+import com.text.formatted.elements.ImageInsert;
+import com.text.formatted.elements.MarkupElement;
+import com.text.formatted.elements.MixedMediaText;
+import com.text.formatted.elements.TextInsert;
 
 /**
  *
@@ -217,8 +214,6 @@ public class GenericCard {
                                 System.out.println("\t\tInvalid field type!");
                                 break;
                         }
-                        
-
                     }
                 }
                 
@@ -246,10 +241,29 @@ public class GenericCard {
         }
         
         try {
-            ImageIO.write(bi, "png", outputStream);
+            ImageIO.write(roundCorners(bi, 35), "png", outputStream);
         } catch (IOException ex) {
             System.out.println("Unable to write image!");
         }
+    }
+    
+    protected static BufferedImage roundCorners(BufferedImage image, int cornerRadius) {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        BufferedImage output = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2 = output.createGraphics();
+
+        g2.setComposite(AlphaComposite.Src);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(Color.WHITE);
+        g2.fill(new RoundRectangle2D.Float(0, 0, w, h, cornerRadius, cornerRadius));
+        g2.setComposite(AlphaComposite.SrcAtop);
+        g2.drawImage(image, 0, 0, null);
+
+        g2.dispose();
+
+        return output;
     }
     
     // ImageWriter stuff
