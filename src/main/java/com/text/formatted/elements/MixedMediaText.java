@@ -5,8 +5,16 @@
 package com.text.formatted.elements;
 
 import com.tcg.generator.layouts.ElementLayout;
+import com.trinary.parse.xml.Formatting;
+import com.trinary.parse.xml.FormattingType;
+import com.trinary.parse.xml.XmlBlock;
+import com.trinary.parse.xml.XmlElement;
+import com.trinary.parse.xml.XmlTagElement;
+import com.trinary.parse.xml.XmlTextElement;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  *
@@ -16,66 +24,15 @@ public class MixedMediaText {
     protected ArrayList<MarkupElement> elements = new ArrayList<>();
     protected int iter = 0;
     protected int width = 0;
+    protected Stack<Formatting> formatStack = new Stack<Formatting>();
     
     public MixedMediaText() {}
     
     public MixedMediaText(String text) {
-        try {
-            int start = 0, end = 0;
-            
-            while (text.length() > 0 && start >= 0 && end >= 0) {
-                start = text.indexOf("[");
-                end = text.indexOf("]");
-                
-                if (start == -1 || end == -1) {
-                    String[] words = text.split(" ");
-                    for (String word : words) {
-                        elements.add(new TextInsert(word));
-                    }
-                    break;
-                }
-                
-                if (start > 0) {
-                    String s = text.substring(0, start);
-                    String[] words = s.split(" ");
-                    if (words.length == 0) {
-                        elements.add(new TextInsert(" "));
-                    } else {
-                        for (String word : words) {
-                            elements.add(new TextInsert(word));
-                        }
-                    }
-                }
-                
-                String s = text.substring(start + 1, end);
-                
-                //Parse the insert element
-                String[] kp = s.split(":");
-                String[] words = kp[1].split(" ");
-                
-                for (String word : words) {
-                    switch(kp[0]) {
-                        case "icon":
-                            elements.add(new ImageInsert(word));
-                            break;
-                        case "bold":
-                            elements.add(new BoldTextInsert(word));
-                            break;
-                        case "italic":
-                            elements.add(new ItalicTextInsert(word));
-                            break;
-                        default:
-                            elements.add(new TextInsert(word));
-                            break;
-                    }
-                }
-                
-                text = text.substring(end + 1);
-            }
-        } catch (Exception e) {
-            elements = new ArrayList<>();
-            System.out.println("INVALID FORMAT!");
-        }
+    	XmlBlock block = new XmlBlock(text);
+    	for (XmlElement element : block.getElements()) {
+			renderElement(element);
+		}
     }
     
     public void addElement(MarkupElement me) {
@@ -127,4 +84,37 @@ public class MixedMediaText {
     public void drawTo(BufferedImage bi, ElementLayout layout) {
         
     }
+    
+	private void renderElement(XmlElement element) {
+		if (element instanceof XmlTextElement) {
+			for (String text : element.getText().split(" ")) {
+				elements.add(new TextInsert(text, formatStack));
+			}
+		} else if (element instanceof XmlTagElement) {
+			XmlTagElement tag = (XmlTagElement)element;
+			switch(tag.getLabel()) {
+			case "img":
+				elements.add(new ImageInsert(tag.getAttributes().get("src")));
+				return;
+			case "i":
+				formatStack.push(new Formatting(FormattingType.ITALIC, tag.getAttributes()));
+				break;
+			case "b":
+				formatStack.push(new Formatting(FormattingType.BOLD, tag.getAttributes()));
+				break;
+			case "span":
+			default:
+				formatStack.push(new Formatting(FormattingType.SPAN, tag.getAttributes()));
+				break;
+			}
+			
+			if (tag.getChildren() != null) {
+				for(XmlElement child : tag.getChildren().getElements()) {
+					renderElement(child);
+				}
+			}
+			
+			formatStack.pop();
+		}
+	}
 }

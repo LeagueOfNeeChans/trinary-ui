@@ -19,6 +19,9 @@ import com.text.formatted.elements.ItalicTextInsert;
 import com.text.formatted.elements.MarkupElement;
 import com.text.formatted.elements.MixedMediaText;
 import com.text.formatted.elements.TextInsert;
+import com.trinary.parse.xml.Formatting;
+import com.trinary.parse.xml.FormattingType;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -37,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
 
 /**
@@ -135,7 +139,8 @@ public class GenericCard {
         }
     }
     
-    public void draw(OutputStream outputStream) {
+    @SuppressWarnings("unchecked")
+	public void draw(OutputStream outputStream) {
     	System.out.println("LAYOUT: " + cardLayout);
     	
         BufferedImage bi = new BufferedImage(cardLayout.getWidth(), cardLayout.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -334,12 +339,10 @@ public class GenericCard {
         while((element = text.next()) != null) {
             if (element instanceof ImageInsert) {
                 iconWidth += cardLayout.getResource(element.getText()).getWidth();
-            } else if (element instanceof BoldTextInsert) {
-                formattedTextWidth += g.getFontMetrics(new Font(elementLayout.getCardFont().getFamily(), Font.BOLD, elementLayout.getCardFont().getSize())).getStringBounds(" " + element.getText(), g).getBounds().width;
-            } else if (element instanceof ItalicTextInsert) {
-                formattedTextWidth += g.getFontMetrics(new Font(elementLayout.getCardFont().getFamily(), Font.ITALIC, elementLayout.getCardFont().getSize())).getStringBounds(" " + element.getText(), g).getBounds().width;
-            }else {
-                alteredLine += " " + element.getText();
+            } else if (element instanceof TextInsert) {
+            	TextInsert ti = (TextInsert)element;
+            	
+                formattedTextWidth += g.getFontMetrics(new Font(elementLayout.getCardFont().getFamily(), ti.getFontWeight(), elementLayout.getCardFont().getSize())).getStringBounds(" " + element.getText(), g).getBounds().width;
             }
             
             line.addElement(element);
@@ -374,12 +377,10 @@ public class GenericCard {
                 
                 if (lastElement instanceof ImageInsert) {
                     iconWidth += cardLayout.getResource(lastElement.getText()).getWidth();
-                } else if (lastElement instanceof BoldTextInsert) {
-                    formattedTextWidth = g.getFontMetrics(new Font(elementLayout.getCardFont().getFamily(), Font.BOLD, elementLayout.getCardFont().getSize())).getStringBounds(" " + lastElement.getText(), g).getBounds().width;
-                } else if (lastElement instanceof ItalicTextInsert) {
-                    formattedTextWidth = g.getFontMetrics(new Font(elementLayout.getCardFont().getFamily(), Font.ITALIC, elementLayout.getCardFont().getSize())).getStringBounds(" " + lastElement.getText(), g).getBounds().width;
-                } else {
-                    alteredLine = lastElement.getText();
+                } else if (lastElement instanceof TextInsert) {
+                	TextInsert ti = (TextInsert)element;
+                	
+                    formattedTextWidth = g.getFontMetrics(new Font(elementLayout.getCardFont().getFamily(), ti.getFontWeight(), elementLayout.getCardFont().getSize())).getStringBounds(" " + lastElement.getText(), g).getBounds().width;
                 }
             }
         }
@@ -568,7 +569,11 @@ public class GenericCard {
                 }
                 
                 if (me instanceof TextInsert) {
-                    g.setFont(elementLayout.getFont());
+                	TextInsert ti = (TextInsert)me;
+                	
+                	CardFont cf = elementLayout.getCardFont();
+                    Font f = new Font(cf.getFamily(), ti.getFontWeight(), cf.getSize());
+                    g.setFont(f);
                     fm = g.getFontMetrics();
                     spaceWidth = fm.getStringBounds(" ", g).getBounds().width;
                     
@@ -582,23 +587,6 @@ public class GenericCard {
                     Integer imageDelta = larger - correction;
                     g.drawImage(r.getImage(), null, elementLayout.getX() + startX + offset, (textBottom - imageDelta));
                     offset += r.getWidth() + spaceWidth;
-                } else if (me instanceof BoldTextInsert) {
-                    CardFont cf = elementLayout.getCardFont();
-                    Font f = new Font(cf.getFamily(), Font.BOLD, cf.getSize());
-                    g.setFont(f);
-                    fm = g.getFontMetrics();
-                    
-                    g.drawString(me.getText(), elementLayout.getX() + startX + offset, textBottom);
-                    offset += fm.getStringBounds(me.getText(), g).getBounds().width + spaceWidth;
-                } else if (me instanceof ItalicTextInsert) {
-                    CardFont cf = elementLayout.getCardFont();
-                    Font f = new Font(cf.getFamily(), Font.ITALIC, cf.getSize());
-                    
-                    g.setFont(f);
-                    fm = g.getFontMetrics();
-                    
-                    g.drawString(me.getText(), elementLayout.getX() + startX + offset, textBottom);
-                    offset += fm.getStringBounds(me.getText(), g).getBounds().width + spaceWidth;
                 }
             }
             index++;

@@ -28,7 +28,7 @@ public class Test {
                     "\"clan\": \"Equestria\"," +
                     "\"race\": \"Pony\"," +
                     "\"effects\": [" +
-                        "\"[icon:cont] If you have a unit named [bold:Twilight Sparkle] on [icon:vanguard], then [bold:Fluttershy] gains [icon:sword]+5000 until end of turn.\"" +
+                        "\"<img src='cont' /> If you have a unit named <b><i>Twilight Sparkle</i></b> on <img src='vanguard' />, then <b>Fluttershy</b> gains <img src='sword' />+5000 until end of turn.\"" +
                     "]" +
                 "}");
         vanguard.draw(new File("card.png"));
