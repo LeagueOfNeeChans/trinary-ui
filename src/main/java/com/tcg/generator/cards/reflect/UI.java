@@ -4,30 +4,28 @@
  */
 package com.tcg.generator.cards.reflect;
 
-import com.tcg.generator.cards.GenericCard;
-import com.tcg.generator.layouts.ElementLayout;
-import com.tcg.generator.layouts.ElementMapping;
-import com.text.formatted.elements.MixedMediaText;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Map.Entry;
-import javax.imageio.ImageIO;
+
+import com.tcg.generator.layouts.ElementLayout;
+import com.tcg.generator.layouts.ElementMapping;
+import com.tcg.generator.ui.GenericUI;
+import com.text.formatted.elements.MixedMediaText;
 
 /**
  *
  * @author mmain
  */
-public class Card extends GenericCard {
+public class UI extends GenericUI {
     @Override
-    public final void draw(String outputDirectory) {
-        BufferedImage bi = new BufferedImage(cardLayout.getWidth(), cardLayout.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        drawLayer(artwork, bi);
+    public final BufferedImage render() {
+        BufferedImage bi = new BufferedImage(uiLayout.getWidth(), uiLayout.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        drawLayer(background, bi);
         
         ArrayList<MixedMediaText> mmtl;
-        for (ElementLayout element: cardLayout.getElements()) {
+        for (ElementLayout element: uiLayout.getElements()) {
             System.out.println("Mapping element: " + element.getName());
             
             // Test to see if layer should be drawn
@@ -122,10 +120,6 @@ public class Card extends GenericCard {
             }
         }
         
-        try {
-            ImageIO.write(bi, "png", new File(outputDirectory + cardName + ".png"));
-        } catch (IOException ex) {
-            System.out.println("Unable to write image!");
-        }
+        return bi;
     }
 }

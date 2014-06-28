@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tcg.generator.cards;
+package com.tcg.generator.ui;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -14,10 +14,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -28,13 +25,13 @@ import javax.imageio.ImageIO;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tcg.generator.cards.reflect.Card;
+import com.tcg.generator.cards.reflect.UI;
 import com.tcg.generator.config.ConfigHolder;
-import com.tcg.generator.layouts.CardFont;
-import com.tcg.generator.layouts.CardLayout;
 import com.tcg.generator.layouts.ElementLayout;
 import com.tcg.generator.layouts.ElementMapping;
 import com.tcg.generator.layouts.Resource;
+import com.tcg.generator.layouts.UIFont;
+import com.tcg.generator.layouts.UILayout;
 import com.text.formatted.elements.ImageInsert;
 import com.text.formatted.elements.MarkupElement;
 import com.text.formatted.elements.MixedMediaText;
@@ -44,64 +41,65 @@ import com.text.formatted.elements.TextInsert;
  *
  * @author Michael
  */
-public class GenericCard {
-    private LinkedHashMap<String, Object> cardData;
-    public String cardName = "Unknown";
-    protected CardLayout cardLayout;
-    protected BufferedImage artwork;
+public class GenericUI {
+    private LinkedHashMap<String, Object> uiData;
+    protected UILayout uiLayout;
+    protected BufferedImage background;
     protected ObjectMapper mapper = new ObjectMapper();
     
-    public GenericCard() {}
+    public GenericUI() {}
     
-    public GenericCard(String name, String artworkFile, CardLayout layout, LinkedHashMap<String, Object> cardData) {
-        this.cardData = cardData;
-        
-        setCardName(name);
+    public GenericUI(String background, UILayout layout, LinkedHashMap<String, Object> uiData) {
+        this.uiData = uiData;
+
         setLayout(layout);
-        setArtwork(new File(artworkFile));
+        setBackground(new File(background));
     }
     
-    public GenericCard(String name, String artworkFile, String layoutFile, LinkedHashMap<String, Object> cardData) {
-        this.cardData = cardData;
-        
-        setCardName(name);
+    public GenericUI(String background, String layoutFile, LinkedHashMap<String, Object> uiData) {
+        this.uiData = uiData;
         setLayout(layoutFile);
-        setArtwork(new File(artworkFile));
+        setBackground(new File(background));
     }
     
-    public final GenericCard setCardName(String cardName) {
-        this.cardName = cardName;
+    public GenericUI(BufferedImage background, String layoutFile, LinkedHashMap<String, Object> uiData) {
+    	this.uiData = uiData;
+    	this.background = background;
+    	setLayout(layoutFile);
+    }
+    
+    public final UILayout getLayout() {
+    	return this.uiLayout;
+    }
+    
+    public final GenericUI setLayout(UILayout layout) {
+        this.uiLayout = layout;
         return this;
     }
     
-    public final GenericCard setLayout(CardLayout layout) {
-        this.cardLayout = layout;
-        return this;
-    }
-    
-    public final GenericCard setLayout(File layoutFile) {
+    public final GenericUI setLayout(File layoutFile) {
         try {
             mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-            this.cardLayout = mapper.readValue(layoutFile, CardLayout.class);
+            this.uiLayout = mapper.readValue(layoutFile, UILayout.class);
         } catch (IOException ex) {
-            Logger.getLogger(Card.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
         }
         return this;
     }
     
-    public final GenericCard setLayout(String jsonData) {
+    public final GenericUI setLayout(String jsonData) {
         try {
             mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-            this.cardLayout = mapper.readValue(jsonData, CardLayout.class);
+            this.uiLayout = mapper.readValue(jsonData, UILayout.class);
         } catch (IOException ex) {
-            Logger.getLogger(Card.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
         }
         return this;
     }
     
-    public final GenericCard setArtwork(File artworkFile) {
+    public final GenericUI setBackground(File artworkFile) {
         try {
-            this.artwork = ImageIO.read(artworkFile);
+            this.background = ImageIO.read(artworkFile);
            System.out.println("Successfully opened: " + artworkFile.getAbsolutePath());
         } catch (IOException ex) {
             System.out.println("Failed to open:      " + artworkFile.getAbsolutePath());
@@ -109,45 +107,32 @@ public class GenericCard {
         return this;
     }
     
-    public final GenericCard setCardData(String jsonData) {
+    public final GenericUI setUiData(String jsonData) {
         try {
-            this.cardData = mapper.readValue(jsonData, LinkedHashMap.class);
+            this.uiData = mapper.readValue(jsonData, LinkedHashMap.class);
         } catch (IOException ex) {
-            Logger.getLogger(GenericCard.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GenericUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         return this;
     }
     
-    public final GenericCard setCardData(LinkedHashMap<String, Object> cardData) {
-        this.cardData = cardData;
+    public final GenericUI setUiData(LinkedHashMap<String, Object> cardData) {
+        this.uiData = cardData;
         return this;
-    }
-
-    public void draw(String outputDirectory) {
-        String name = (String)((cardData.get("cardName") != null ? cardData.get("cardName") : cardName));
-        draw(new File(outputDirectory + name + ".png"));
-    }
-    
-    public void draw(File outputFile) {
-        try {
-            draw(new FileOutputStream(outputFile));
-        } catch (FileNotFoundException ex) {
-            System.out.println("Unable to find file!");
-        }
     }
     
     @SuppressWarnings("unchecked")
-	public void draw(OutputStream outputStream) {
-    	System.out.println("LAYOUT: " + cardLayout);
+	public BufferedImage render() {
+    	System.out.println("LAYOUT: " + uiLayout);
     	
-        BufferedImage bi = new BufferedImage(cardLayout.getWidth(), cardLayout.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        drawLayer(artwork, bi);
+        BufferedImage bi = new BufferedImage(uiLayout.getWidth(), uiLayout.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        drawLayer(background, bi);
         
         ArrayList<MixedMediaText> mmtl;
-        for (ElementLayout element: cardLayout.getElements()) {
+        for (ElementLayout element: uiLayout.getElements()) {
             
             // Test to see if layer should be drawn
-            if (!element.shouldDraw(cardData)) {
+            if (!element.shouldDraw(uiData)) {
                 continue;
             }
             
@@ -159,13 +144,7 @@ public class GenericCard {
                 for (Entry<String, ElementMapping> entry : element.getMappings().entrySet()) {
                     ElementMapping mapping =  entry.getValue();
                     String field = entry.getKey();
-                    Object value;
-                    if (entry.getKey().equals("cardName") && cardData.get(field) == null) {
-                        value = cardName;
-                    }
-                    else {
-                        value = cardData.get(field);
-                    } 
+                    Object value = uiData.get(field);
 
                     if (value != null) {
                         System.out.println("\tFIELD: " +  field + " (" + value.getClass().getSimpleName() + ")");
@@ -240,11 +219,7 @@ public class GenericCard {
             }
         }
         
-        try {
-            ImageIO.write(roundCorners(bi, 35), "png", outputStream);
-        } catch (IOException ex) {
-            System.out.println("Unable to write image!");
-        }
+        return bi;
     }
     
     protected static BufferedImage roundCorners(BufferedImage image, int cornerRadius) {
@@ -352,7 +327,7 @@ public class GenericCard {
         
         while((element = text.next()) != null) {
             if (element instanceof ImageInsert) {
-                iconWidth += cardLayout.getResource(element.getText()).getWidth();
+                iconWidth += uiLayout.getResource(element.getText()).getWidth();
             } else if (element instanceof TextInsert) {
             	TextInsert ti = (TextInsert)element;
             	
@@ -383,14 +358,14 @@ public class GenericCard {
                 alteredLine = "";
                                 
                 if (lastIcon != null) {
-                    iconWidth += cardLayout.getResource(lastIcon.getText()).getWidth();
+                    iconWidth += uiLayout.getResource(lastIcon.getText()).getWidth();
                     line.addElement(lastIcon);
                     lastIcon = null;
                 }
                 line.addElement(lastElement);
                 
                 if (lastElement instanceof ImageInsert) {
-                    iconWidth += cardLayout.getResource(lastElement.getText()).getWidth();
+                    iconWidth += uiLayout.getResource(lastElement.getText()).getWidth();
                 } else if (lastElement instanceof TextInsert) {
                 	TextInsert ti = (TextInsert)element;
                 	
@@ -585,7 +560,7 @@ public class GenericCard {
                 if (me instanceof TextInsert) {
                 	TextInsert ti = (TextInsert)me;
                 	
-                	CardFont cf = elementLayout.getCardFont();
+                	UIFont cf = elementLayout.getCardFont();
                     Font f = new Font(cf.getFamily(), ti.getFontWeight(), cf.getSize());
                     g.setFont(f);
                     fm = g.getFontMetrics();
@@ -594,7 +569,7 @@ public class GenericCard {
                     g.drawString(me.getText(), elementLayout.getX() + startX + offset, textBottom);
                     offset += fm.getStringBounds(me.getText(), g).getBounds().width + spaceWidth;
                 } else if (me instanceof ImageInsert) {
-                    Resource r = cardLayout.getResource(me.getText());
+                    Resource r = uiLayout.getResource(me.getText());
                     Integer larger = Math.max(r.getHeight(), actualHeight);
                     Integer diff = Math.abs(r.getHeight() - actualHeight);
                     Integer correction = (int)Math.round((double)diff/2.0);

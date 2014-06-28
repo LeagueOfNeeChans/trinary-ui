@@ -17,18 +17,18 @@ import javax.imageio.ImageIO;
  *
  * @author Michael
  */
-public class CardLayer {
+public class UILayer {
     protected String type;
     protected String file;
-    protected CardColor color;
+    protected UIColor color;
     protected Integer width, height;
     protected BufferedImage image;
     
     @JsonCreator
-    public CardLayer(
+    public UILayer(
             @JsonProperty("type")   String type,
             @JsonProperty("file")   String file,
-            @JsonProperty("color")  CardColor color,
+            @JsonProperty("color")  UIColor color,
             @JsonProperty("width")  Integer width,
             @JsonProperty("height") Integer height
             ) {

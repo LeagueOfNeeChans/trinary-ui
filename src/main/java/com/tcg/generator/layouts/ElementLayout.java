@@ -23,9 +23,9 @@ public class ElementLayout {
     private Integer marginX, marginY;
     private Boolean wordWrap;
     private String align, vAlign;
-    private CardFont font;
+    private UIFont font;
     private Double transparency;
-    private CardLayer layer;
+    private UILayer layer;
     private Integer columns;
     private Condition condition;
     private LinkedHashMap<String, ElementMapping> mappings;
@@ -46,8 +46,8 @@ public class ElementLayout {
             @JsonProperty("v-align")      String vAlign,
             @JsonProperty("columns")      Integer columns,
             @JsonProperty("transparency") Double transparency,
-            @JsonProperty("font")         CardFont font,
-            @JsonProperty("layer")        CardLayer layer,
+            @JsonProperty("font")         UIFont font,
+            @JsonProperty("layer")        UILayer layer,
             @JsonProperty("mappings")     LinkedHashMap<String, ElementMapping> mappings,
             @JsonProperty("condition")    String condition
             ) {
@@ -146,7 +146,7 @@ public class ElementLayout {
         return transparency;
     }
     
-    public CardFont getCardFont() {
+    public UIFont getCardFont() {
         return font;
     }
     

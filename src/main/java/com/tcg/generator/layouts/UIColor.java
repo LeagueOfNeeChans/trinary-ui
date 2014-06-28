@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.awt.Color;
 
-public class CardColor {
+public class UIColor {
 	protected Integer r, g, b;
 
 	@JsonCreator
-	CardColor(
+	UIColor(
 			@JsonProperty("r") Integer r,
 			@JsonProperty("g") Integer g,
 			@JsonProperty("b")Integer b

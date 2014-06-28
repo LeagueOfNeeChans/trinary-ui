@@ -12,18 +12,18 @@ import java.awt.Color;
  *
  * @author mmain
  */
-public class CardFont {
+public class UIFont {
     private String family;
     private String weight;
     private int size;
-    private CardColor color;
+    private UIColor color;
     
     @JsonCreator
-    public CardFont(
+    public UIFont(
             @JsonProperty("family") String family,
             @JsonProperty("weight") String weight,
             @JsonProperty("size")   int size,
-            @JsonProperty("color")  CardColor color
+            @JsonProperty("color")  UIColor color
             ) {
         this.family = family;
         this.weight = weight;

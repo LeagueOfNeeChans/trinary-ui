@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * @author mmain
  */
-public class CardLayout {
+public class UILayout {
     protected ArrayList<ElementLayout> elements;
     protected ArrayList<Resource>resources;
     protected String name;
@@ -22,7 +22,7 @@ public class CardLayout {
     protected ObjectMapper mapper = new ObjectMapper();
     
     @JsonCreator
-    public CardLayout(
+    public UILayout(
             @JsonProperty("name")      String name,
             @JsonProperty("elements")  ArrayList<ElementLayout> elements,
             @JsonProperty("resources") ArrayList<Resource> resources,
