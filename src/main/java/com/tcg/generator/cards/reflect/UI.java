@@ -9,8 +9,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
-import com.tcg.generator.layouts.ElementLayout;
-import com.tcg.generator.layouts.ElementMapping;
+import com.tcg.generator.layouts.elements.ElementMapping;
+import com.tcg.generator.layouts.elements.GenericElement;
 import com.tcg.generator.ui.GenericUI;
 import com.text.formatted.elements.MixedMediaText;
 
@@ -19,13 +19,16 @@ import com.text.formatted.elements.MixedMediaText;
  * @author mmain
  */
 public class UI extends GenericUI {
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public final BufferedImage render() {
         BufferedImage bi = new BufferedImage(uiLayout.getWidth(), uiLayout.getHeight(), BufferedImage.TYPE_INT_ARGB);
         drawLayer(background, bi);
         
+        uiLayout.sort();
+        
         ArrayList<MixedMediaText> mmtl;
-        for (ElementLayout element: uiLayout.getElements()) {
+        for (GenericElement element: uiLayout.getElements()) {
             System.out.println("Mapping element: " + element.getName());
             
             // Test to see if layer should be drawn

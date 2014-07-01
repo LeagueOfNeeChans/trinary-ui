@@ -4,7 +4,7 @@
  */
 package com.text.formatted.elements;
 
-import com.tcg.generator.layouts.ElementLayout;
+import com.tcg.generator.layouts.elements.GenericElement;
 import com.trinary.parse.xml.Formatting;
 import com.trinary.parse.xml.FormattingType;
 import com.trinary.parse.xml.XmlBlock;
@@ -81,7 +81,7 @@ public class MixedMediaText {
         iter = 0;
     }
     
-    public void drawTo(BufferedImage bi, ElementLayout layout) {
+    public void drawTo(BufferedImage bi, GenericElement layout) {
         
     }
     

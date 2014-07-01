@@ -27,11 +27,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tcg.generator.cards.reflect.UI;
 import com.tcg.generator.config.ConfigHolder;
-import com.tcg.generator.layouts.ElementLayout;
-import com.tcg.generator.layouts.ElementMapping;
 import com.tcg.generator.layouts.Resource;
 import com.tcg.generator.layouts.UIFont;
 import com.tcg.generator.layouts.UILayout;
+import com.tcg.generator.layouts.elements.ElementMapping;
+import com.tcg.generator.layouts.elements.GenericElement;
 import com.text.formatted.elements.ImageInsert;
 import com.text.formatted.elements.MarkupElement;
 import com.text.formatted.elements.MixedMediaText;
@@ -128,8 +128,10 @@ public class GenericUI {
         BufferedImage bi = new BufferedImage(uiLayout.getWidth(), uiLayout.getHeight(), BufferedImage.TYPE_INT_ARGB);
         drawLayer(background, bi);
         
+        uiLayout.sort();
+        
         ArrayList<MixedMediaText> mmtl;
-        for (ElementLayout element: uiLayout.getElements()) {
+        for (GenericElement element: uiLayout.getElements()) {
             
             // Test to see if layer should be drawn
             if (!element.shouldDraw(uiData)) {
@@ -190,8 +192,8 @@ public class GenericUI {
                                 }
                                 break;
                             default:
-                                System.out.println("\t\tInvalid field type!");
-                                break;
+                                //System.out.println("\t\tInvalid field type!");
+                            	continue;
                         }
                     }
                 }
@@ -242,7 +244,7 @@ public class GenericUI {
     }
     
     // ImageWriter stuff
-    protected ArrayList<String> splitAndFitText(BufferedImage target, ArrayList<String> lines, ElementLayout elementLayout) {
+    protected ArrayList<String> splitAndFitText(BufferedImage target, ArrayList<String> lines, GenericElement elementLayout) {
         ArrayList<String> returnLines = new ArrayList<>();
         
         for (String line : lines) {
@@ -253,7 +255,7 @@ public class GenericUI {
         return returnLines;
     }
     
-    protected ArrayList<String> splitAndFitText(BufferedImage target, String text, ElementLayout elementLayout) {
+    protected ArrayList<String> splitAndFitText(BufferedImage target, String text, GenericElement elementLayout) {
         Graphics2D g = (Graphics2D) target.getGraphics();
         g.setFont(elementLayout.getFont());
         
@@ -294,7 +296,7 @@ public class GenericUI {
         return lines;
     }
     
-    protected ArrayList<MixedMediaText> splitAndFitMixedText(BufferedImage target, ArrayList<String> lines, ElementLayout elementLayout) {
+    protected ArrayList<MixedMediaText> splitAndFitMixedText(BufferedImage target, ArrayList<String> lines, GenericElement elementLayout) {
         ArrayList<MixedMediaText> returnLines = new ArrayList<>();
         
         for (String line : lines) {
@@ -305,7 +307,7 @@ public class GenericUI {
         return returnLines;
     }
     
-    protected ArrayList<MixedMediaText> splitAndFitMixedText(BufferedImage target, MixedMediaText text, ElementLayout elementLayout) {
+    protected ArrayList<MixedMediaText> splitAndFitMixedText(BufferedImage target, MixedMediaText text, GenericElement elementLayout) {
         Graphics2D g = target.createGraphics();
         g.setFont(elementLayout.getFont());
         
@@ -314,7 +316,6 @@ public class GenericUI {
         MixedMediaText line = new MixedMediaText();
         MarkupElement lastElement;
         MarkupElement lastIcon = null;
-        String alteredLine = "";
         int iconWidth = 0;
         int width = 0;
         int lastWidth = 0;
@@ -331,14 +332,26 @@ public class GenericUI {
             } else if (element instanceof TextInsert) {
             	TextInsert ti = (TextInsert)element;
             	
-                formattedTextWidth += g.getFontMetrics(new Font(elementLayout.getCardFont().getFamily(), ti.getFontWeight(), elementLayout.getCardFont().getSize())).getStringBounds(" " + element.getText(), g).getBounds().width;
+                formattedTextWidth += g.getFontMetrics(new Font(elementLayout.getUiFont().getFamily(), ti.getFontWeight(), elementLayout.getUiFont().getSize())).getStringBounds(" " + element.getText(), g).getBounds().width;
             }
             
             line.addElement(element);
             
-            int textWidth = fm.getStringBounds(alteredLine, g).getBounds().width;
+            /*
+            System.out.println(String.format(""
+            		+ "FM   WIDTH:  %d\n"
+            		+ "IMAGE WIDTH: %d\n"
+            		+ "---------------\n"
+            		+ "TOTAL:       %d\n"
+            		+ "MAX:         %d\n\n",
+            		formattedTextWidth,
+            		iconWidth,
+            		width,
+            		maxWidth));
+            */
+            
             lastWidth = width;
-            width = textWidth + iconWidth + formattedTextWidth;
+            width = iconWidth + formattedTextWidth;
             
             if (width >= maxWidth) {
                 lastElement = line.popElement();
@@ -355,7 +368,6 @@ public class GenericUI {
                 line = new MixedMediaText();
                 iconWidth = 0;
                 formattedTextWidth = 0;
-                alteredLine = "";
                                 
                 if (lastIcon != null) {
                     iconWidth += uiLayout.getResource(lastIcon.getText()).getWidth();
@@ -369,7 +381,7 @@ public class GenericUI {
                 } else if (lastElement instanceof TextInsert) {
                 	TextInsert ti = (TextInsert)element;
                 	
-                    formattedTextWidth = g.getFontMetrics(new Font(elementLayout.getCardFont().getFamily(), ti.getFontWeight(), elementLayout.getCardFont().getSize())).getStringBounds(" " + lastElement.getText(), g).getBounds().width;
+                    formattedTextWidth = g.getFontMetrics(new Font(elementLayout.getUiFont().getFamily(), ti.getFontWeight(), elementLayout.getUiFont().getSize())).getStringBounds(" " + lastElement.getText(), g).getBounds().width;
                 }
             }
         }
@@ -379,7 +391,7 @@ public class GenericUI {
         return lines;
     }
     
-    protected void drawLayer(ElementLayout elementLayout, BufferedImage target) {
+    protected void drawLayer(GenericElement elementLayout, BufferedImage target) {
         if (elementLayout.getLayer() == null) {
             return;
         }
@@ -413,10 +425,10 @@ public class GenericUI {
         g.drawImage(layerImage, null, 0, 0);
     }
     
-    protected void drawText(BufferedImage target, ArrayList<String> lines, ElementLayout elementLayout) {
+    protected void drawText(BufferedImage target, ArrayList<String> lines, GenericElement elementLayout) {
         Graphics2D g = (Graphics2D) target.getGraphics();
         g.setFont(elementLayout.getFont());
-        g.setColor(elementLayout.getCardFont().getColor());
+        g.setColor(elementLayout.getUiFont().getColor());
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -464,7 +476,7 @@ public class GenericUI {
         }
     }
     
-    protected void drawText(BufferedImage target, String text, ElementLayout elementLayout) {
+    protected void drawText(BufferedImage target, String text, GenericElement elementLayout) {
         Graphics2D g = (Graphics2D) target.getGraphics();
         g.setFont(elementLayout.getFont());
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -504,14 +516,14 @@ public class GenericUI {
             break;
         }
         
-        g.setColor(elementLayout.getCardFont().getColor());
+        g.setColor(elementLayout.getUiFont().getColor());
         g.drawString(text, elementLayout.getX() + startX, elementLayout.getY() + startY + actualHeight);
     }
     
-    protected void drawMixedMediaText(BufferedImage target, ArrayList<MixedMediaText> lines, ElementLayout elementLayout) {
+    protected void drawMixedMediaText(BufferedImage target, ArrayList<MixedMediaText> lines, GenericElement elementLayout) {
         Graphics2D g = (Graphics2D) target.getGraphics();
         g.setFont(elementLayout.getFont());
-        g.setColor(elementLayout.getCardFont().getColor());
+        g.setColor(elementLayout.getUiFont().getColor());
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -539,7 +551,7 @@ public class GenericUI {
                 g.drawLine(elementLayout.getX(), textBottom - (fm.getAscent() - fm.getDescent()), elementLayout.getWidth(), textBottom - (fm.getAscent() - fm.getDescent()));
             }
             
-            g.setColor(elementLayout.getCardFont().getColor());
+            g.setColor(elementLayout.getUiFont().getColor());
             
             while ((me = mmt.next()) != null) {
                 int startX;
@@ -560,9 +572,16 @@ public class GenericUI {
                 if (me instanceof TextInsert) {
                 	TextInsert ti = (TextInsert)me;
                 	
-                	UIFont cf = elementLayout.getCardFont();
+                	UIFont cf = elementLayout.getUiFont();
+                	Color c = ti.getFontColor();
+                	
+                	if (c == null) {
+                		c = cf.getColor();
+                	}
+                	
                     Font f = new Font(cf.getFamily(), ti.getFontWeight(), cf.getSize());
                     g.setFont(f);
+                    g.setColor(c);
                     fm = g.getFontMetrics();
                     spaceWidth = fm.getStringBounds(" ", g).getBounds().width;
                     
@@ -582,10 +601,10 @@ public class GenericUI {
         }
     }
     
-    protected void drawTableCols(BufferedImage target, ArrayList<String> cells, int nCols, ElementLayout elementLayout) {
+    protected void drawTableCols(BufferedImage target, ArrayList<String> cells, int nCols, GenericElement elementLayout) {
         Graphics2D g = target.createGraphics();
         g.setFont(elementLayout.getFont());
-        g.setColor(elementLayout.getCardFont().getColor());
+        g.setColor(elementLayout.getUiFont().getColor());
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);

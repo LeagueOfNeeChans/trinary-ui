@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tcg.generator.layouts;
+package com.tcg.generator.layouts.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Michael
  */
 public class ElementMapping {
-    String label;
-    String type;
+    protected String label;
+    protected String type;
     
     @JsonCreator
     public ElementMapping(

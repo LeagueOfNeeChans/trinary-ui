@@ -2,10 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tcg.generator.layouts;
+package com.tcg.generator.layouts.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tcg.generator.layouts.Condition;
+import com.tcg.generator.layouts.UIColor;
+import com.tcg.generator.layouts.UIFont;
+import com.tcg.generator.layouts.UILayer;
+
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -15,23 +20,29 @@ import java.util.LinkedHashMap;
  *
  * @author mmain
  */
-public class ElementLayout {
-    private String name, type;
-    private String inherits;
-    private Integer x, y;
-    private Integer width, height;
-    private Integer marginX, marginY;
-    private Boolean wordWrap;
-    private String align, vAlign;
-    private UIFont font;
-    private Double transparency;
-    private UILayer layer;
-    private Integer columns;
-    private Condition condition;
-    private LinkedHashMap<String, ElementMapping> mappings;
+public class GenericElement implements Comparable<GenericElement> {
+	protected String name = "";
+	protected String type = "";
+	protected String inherits = "";
+	protected Integer x = 0, y = 0;
+	protected Integer width = 0, height = 0;
+	protected Integer marginX = 0, marginY = 0;
+	protected Boolean wordWrap = false;
+	protected String align = "left", vAlign = "top";
+	protected UIFont font = new UIFont("Optima", "normal", 12, new UIColor(0, 0, 0));
+	protected Double transparency = 1.0;
+	protected UILayer layer = null;
+	protected Integer columns = null;
+	protected Condition condition = null;
+	protected LinkedHashMap<String, ElementMapping> mappings = new LinkedHashMap<>();
+	protected Integer zIndex = 0;
+	
+	public GenericElement() {
+		
+	}
     
     @JsonCreator
-    public ElementLayout(
+    public GenericElement(
             @JsonProperty("name")         String name,
             @JsonProperty("type")         String type,
             @JsonProperty("inherits")     String inherits,
@@ -146,7 +157,7 @@ public class ElementLayout {
         return transparency;
     }
     
-    public UIFont getCardFont() {
+    public UIFont getUiFont() {
         return font;
     }
     
@@ -166,7 +177,79 @@ public class ElementLayout {
         return vAlign;
     }
     
-    public boolean shouldDraw(LinkedHashMap<String, Object> object) {
+    public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setInherits(String inherits) {
+		this.inherits = inherits;
+	}
+
+	public void setX(Integer x) {
+		this.x = x;
+	}
+
+	public void setY(Integer y) {
+		this.y = y;
+	}
+
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
+
+	public void setHeight(Integer height) {
+		this.height = height;
+	}
+
+	public void setMarginX(Integer marginX) {
+		this.marginX = marginX;
+	}
+
+	public void setMarginY(Integer marginY) {
+		this.marginY = marginY;
+	}
+
+	public void setWordWrap(Boolean wordWrap) {
+		this.wordWrap = wordWrap;
+	}
+
+	public void setAlign(String align) {
+		this.align = align;
+	}
+
+	public void setvAlign(String vAlign) {
+		this.vAlign = vAlign;
+	}
+
+	public void setFont(UIFont font) {
+		this.font = font;
+	}
+
+	public void setTransparency(Double transparency) {
+		this.transparency = transparency;
+	}
+
+	public void setLayer(UILayer layer) {
+		this.layer = layer;
+	}
+
+	public void setColumns(Integer columns) {
+		this.columns = columns;
+	}
+
+	public void setCondition(Condition condition) {
+		this.condition = condition;
+	}
+
+	public void setMappings(LinkedHashMap<String, ElementMapping> mappings) {
+		this.mappings = mappings;
+	}
+
+	public boolean shouldDraw(LinkedHashMap<String, Object> object) {
         if (condition != null) {
             return condition.test(object);
         } else {
@@ -197,7 +280,7 @@ public class ElementLayout {
                 fontWeight = Font.ITALIC;
                 break;
             case "bold-italic":
-                fontWeight = Font.BOLD | Font.ITALIC;
+                fontWeight = Font.BOLD + Font.ITALIC;
                 break;
             default:
             case "normal":
@@ -227,7 +310,23 @@ public class ElementLayout {
         return mappings.get(fieldName);
     }
     
-    public String toString() {
+    public void setMapping(String fieldName, ElementMapping mapping) {
+    	mappings.put(fieldName, mapping);
+    }
+    
+    public void setMapping(String fieldName) {
+    	mappings.put(fieldName, new ElementMapping(null, null));
+    }
+
+    public Integer getzIndex() {
+		return zIndex;
+	}
+
+	public void setzIndex(Integer zIndex) {
+		this.zIndex = zIndex;
+	}
+
+	public String toString() {
         return  "\tname:         " + name + "\n" +
                 "\ttype:         " + type + "\n" +
                 "\tx:            " + x + "\n" +
@@ -239,5 +338,16 @@ public class ElementLayout {
                 "\tcolumns:      " + columns + "\n" +
                 "\ttransparency: " + transparency + "\n" +
                 "\tfont:         " + "\n" + font;
-    }    
+    }
+
+	@Override
+	public int compareTo(GenericElement o) {
+		if (this.zIndex < o.zIndex) {
+			return -1;
+		} else if (this.zIndex == o.zIndex) {
+			return 0;
+		} else {
+			return 1;
+		}
+	}    
 }

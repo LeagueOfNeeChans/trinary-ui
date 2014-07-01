@@ -11,7 +11,7 @@ public class XmlTagElement extends XmlTag {
 	
 	protected static Pattern openTagRegex = Pattern.compile("<(\\S+)\\s*(.*)>");
 	protected static Pattern elementRegex = Pattern.compile("(\\w+)\\s*=\\s*['\"]*([^'\"]+)['\"]*");
-	protected static Pattern attributeRegex = Pattern.compile("([a-zA-Z0-9\\-]+)\\s*=\\s*['\"]([a-zA-Z0-9\\- ,;:\\.]+)['\"]");
+	protected static Pattern attributeRegex = Pattern.compile("([a-zA-Z0-9\\-]+)\\s*=\\s*['\"]([a-zA-Z0-9\\- ,;:\\.#]+)['\"]");
 		
 	public HashMap<String, String> getAttributes() {
 		return attributes;

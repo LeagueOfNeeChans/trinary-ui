@@ -1,10 +1,11 @@
 package com.trinary.parse.xml;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Formatting {
 	protected FormattingType type;
-	protected Map<String, String> attributes;
+	protected HashMap<String, String> attributes = new HashMap<String, String>();
 	
 	public Formatting(FormattingType type) {
 		this.type = type;
@@ -12,7 +13,7 @@ public class Formatting {
 	
 	public Formatting(FormattingType type, Map<String, String> attributes) {
 		this.type = type;
-		this.attributes = attributes;
+		this.attributes.putAll(attributes);
 	}
 
 	public FormattingType getType() {
@@ -28,7 +29,7 @@ public class Formatting {
 	}
 
 	public void setAttributes(Map<String, String> attributes) {
-		this.attributes = attributes;
+		this.attributes.putAll(attributes);
 	}
 	
 	public String toString() {

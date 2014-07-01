@@ -24,6 +24,32 @@ public class UILayer {
     protected Integer width, height;
     protected BufferedImage image;
     
+    public UILayer(String file) {
+    	this.file = file;
+        
+        if (file != null) {
+            try {
+                this.image = ImageIO.read(new File(ConfigHolder.getConfig("rootDirectory") + file));
+            } catch (IOException ex) {
+                System.out.println("Unable to open: " + ConfigHolder.getConfig("rootDirectory") + file);
+                return;
+            }
+            System.out.println("Successfully opened: " + ConfigHolder.getConfig("rootDirectory") + file);
+        }
+    }
+    
+    public UILayer(UIColor color, Integer width, Integer height) {        
+        if (color != null) {
+            this.width = width;
+            this.height = height;
+            this.image = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_ARGB);
+            
+            Graphics graphics = this.image.getGraphics();
+            graphics.setColor(color.getColor());
+            graphics.fillRect(0, 0, this.width, this.height);
+        }
+    }
+    
     @JsonCreator
     public UILayer(
             @JsonProperty("type")   String type,

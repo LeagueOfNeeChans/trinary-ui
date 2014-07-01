@@ -8,7 +8,7 @@ public class UIColor {
 	protected Integer r, g, b;
 
 	@JsonCreator
-	UIColor(
+	public UIColor(
 			@JsonProperty("r") Integer r,
 			@JsonProperty("g") Integer g,
 			@JsonProperty("b")Integer b

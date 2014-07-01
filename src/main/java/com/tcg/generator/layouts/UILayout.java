@@ -4,27 +4,35 @@
  */
 package com.tcg.generator.layouts;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.Map;
+import com.tcg.generator.layouts.elements.GenericElement;
 
 /**
  *
  * @author mmain
  */
 public class UILayout {
-    protected ArrayList<ElementLayout> elements;
+    protected ArrayList<GenericElement> elements;
     protected ArrayList<Resource>resources;
     protected String name;
     protected Integer width, height;
+    protected Boolean sorted = false;
     protected ObjectMapper mapper = new ObjectMapper();
+    
+    public UILayout() {
+    	this.elements = new ArrayList<GenericElement>();
+    	this.resources = new ArrayList<Resource>();
+    }
     
     @JsonCreator
     public UILayout(
             @JsonProperty("name")      String name,
-            @JsonProperty("elements")  ArrayList<ElementLayout> elements,
+            @JsonProperty("elements")  ArrayList<GenericElement> elements,
             @JsonProperty("resources") ArrayList<Resource> resources,
             @JsonProperty("width")     Integer width,
             @JsonProperty("height")    Integer height
@@ -36,16 +44,25 @@ public class UILayout {
         this.resources = resources;
     }
     
+    public void addElement(GenericElement element) {
+    	elements.add(element);
+    	sorted = false;
+    }
+    
+    public void addResource(Resource resource) {
+    	resources.add(resource);
+    }
+    
     public String getName() {
         return name;
     }
     
-    public ArrayList<ElementLayout> getElements() {
+    public ArrayList<GenericElement> getElements() {
         return elements;
     }
     
-    public ElementLayout getElementByMapping(String fieldName) {
-        for (ElementLayout element : elements) {
+    public GenericElement getElementByMapping(String fieldName) {
+        for (GenericElement element : elements) {
             if (element.getMappings() != null && element.getMappings().get(fieldName) != null) {
                 return element;
             }
@@ -53,9 +70,9 @@ public class UILayout {
         return null;
     }
     
-    public ArrayList<ElementLayout> getElementsByType(String type) {
-        ArrayList<ElementLayout> found = new ArrayList<>();
-        for (ElementLayout element : elements) {
+    public ArrayList<GenericElement> getElementsByType(String type) {
+        ArrayList<GenericElement> found = new ArrayList<>();
+        for (GenericElement element : elements) {
             if (element.getName().equals(type)) {
                 found.add(element);
             }
@@ -63,8 +80,8 @@ public class UILayout {
         return found;
     }
     
-    public ElementLayout getElementByName(String elementName) {
-        for (ElementLayout element : elements) {
+    public GenericElement getElementByName(String elementName) {
+        for (GenericElement element : elements) {
             if (element.getName().equals(elementName)) {
                 return element;
             }
@@ -72,7 +89,15 @@ public class UILayout {
         return null;
     }
     
-    public Integer getWidth() {
+    public void setWidth(Integer width) {
+		this.width = width;
+	}
+
+	public void setHeight(Integer height) {
+		this.height = height;
+	}
+
+	public Integer getWidth() {
         return width;
     }
     
@@ -104,10 +129,17 @@ public class UILayout {
     public String toString() {
         String s = "";
         
-        for (ElementLayout element : elements) {
+        for (GenericElement element : elements) {
             s += element.toString() + "\n";
         }
         
         return s;
+    }
+    
+	public void sort() {
+    	if (!sorted) {
+    		Collections.sort(elements);
+    		sorted = true;
+    	}
     }
 }

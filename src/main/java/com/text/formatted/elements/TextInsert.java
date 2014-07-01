@@ -4,9 +4,9 @@
  */
 package com.text.formatted.elements;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Stack;
 
 import com.trinary.parse.xml.Formatting;
@@ -25,6 +25,41 @@ public class TextInsert extends MarkupElement {
         for (Formatting formatting : formatStack) {
         	this.formatStack.add(formatting);
         }
+    }
+    
+    public Color getFontColor() {
+    	Color color = null;
+    	
+    	for (Formatting formatting : formatStack) {
+    		String hexString = formatting.getAttributes().get("color");
+    		
+    		if (hexString == null) {
+    			return null;
+    		}
+    		
+    		
+    		if (hexString.toCharArray()[0] == '#') {
+    			hexString = hexString.substring(1);
+    			
+    			if (hexString.length() != 6) {
+    				return null;
+    			}
+    		
+	    		String red   = hexString.substring(0, 2);
+	    		String green = hexString.substring(2, 4);
+	    		String blue  = hexString.substring(4, 6);
+	    		
+	    		Integer r = Integer.decode("0x" + red);
+	    		Integer g = Integer.decode("0x" + green);
+	    		Integer b = Integer.decode("0x" + blue);
+	    		
+	    		System.out.println(String.format("COLOR: %3d, %3d, %3d", r, g, b));
+	    		
+	    		color = new Color(r, g, b);
+    		}
+    	}
+    	
+    	return color;
     }
     
     public int getFontWeight() {
@@ -46,8 +81,6 @@ public class TextInsert extends MarkupElement {
 				break;
     		}
     	}
-    	
-    	System.out.println("FONT ======> " + font);
     	
     	return font;
     }
