@@ -27,7 +27,7 @@ public class VisualNovelUI extends UI {
 		scene.setY(0);
 		scene.setWidth(width);
 		scene.setHeight(height);
-		scene.setLayer(new UILayer(new UIColor(0, 0, 0), width, height));
+		scene.setLayer(new UILayer("art/miku.jpg", width, height));
 		scene.setTransparency(1.0);
 		
 		textBox.setName("text");
@@ -35,11 +35,12 @@ public class VisualNovelUI extends UI {
 		textBox.setzIndex(2);
 		textBox.setX(boxX);
 		textBox.setY(400);
-		textBox.setMarginX(10);
-		textBox.setMarginY(10);
+		textBox.setMarginX(20);
+		textBox.setMarginY(20);
 		textBox.setWidth(boxWidth);
 		textBox.setHeight(boxHeight);
-		textBox.setLayer(new UILayer(new UIColor(255, 255, 255), boxWidth, boxHeight));
+		//textBox.setLayer(new UILayer(new UIColor(255, 255, 255), boxWidth, boxHeight));
+		textBox.setLayer(new UILayer("layers/vanguard/effect-box.png", boxWidth, boxHeight));
 		textBox.setTransparency(0.50);
 		textBox.setFont(new UIFont("Optima", "normal", 12, new UIColor(0, 0, 0)));
 		textBox.setMapping("text");

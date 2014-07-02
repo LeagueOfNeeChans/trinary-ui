@@ -43,7 +43,7 @@ public class GFXCore {
 				+ "My anus is bleeding please help me why won't <b>anyone</b> help me oh "
 				+ "gosh there's <i color='#FF0000'>blood</i> everywhere help me why isn't anyone helping me "
 				+ "oh god I can see Jesus's eyes!  Why have you forsaken me oh lord?  Give me a "
-				+ " <img src='sword' /> I will do it myself!");
+				+ "<img src='sword' /> I will do it myself!");
 		
 		while (running) {
 			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();

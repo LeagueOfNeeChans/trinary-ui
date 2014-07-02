@@ -583,7 +583,6 @@ public class GenericUI {
                     g.setFont(f);
                     g.setColor(c);
                     fm = g.getFontMetrics();
-                    spaceWidth = fm.getStringBounds(" ", g).getBounds().width;
                     
                     g.drawString(me.getText(), elementLayout.getX() + startX + offset, textBottom);
                     offset += fm.getStringBounds(me.getText(), g).getBounds().width + spaceWidth;

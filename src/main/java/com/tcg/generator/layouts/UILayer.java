@@ -7,10 +7,15 @@ package com.tcg.generator.layouts;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tcg.generator.config.ConfigHolder;
+
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 
 /**
@@ -30,6 +35,28 @@ public class UILayer {
         if (file != null) {
             try {
                 this.image = ImageIO.read(new File(ConfigHolder.getConfig("rootDirectory") + file));
+            } catch (IOException ex) {
+                System.out.println("Unable to open: " + ConfigHolder.getConfig("rootDirectory") + file);
+                return;
+            }
+            System.out.println("Successfully opened: " + ConfigHolder.getConfig("rootDirectory") + file);
+        }
+    }
+    
+    public UILayer(String file, Integer width, Integer height) {
+    	this.file = file;
+        
+        if (file != null) {
+            try {
+            	this.width = width;
+                this.height = height;
+                this.image = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_ARGB); 
+                BufferedImage layerImage = ImageIO.read(new File(ConfigHolder.getConfig("rootDirectory") + file));
+                
+                Graphics2D g = (Graphics2D)this.image.getGraphics();
+                
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                g.drawImage((Image)layerImage, 0, 0, width, height, null);
             } catch (IOException ex) {
                 System.out.println("Unable to open: " + ConfigHolder.getConfig("rootDirectory") + file);
                 return;
