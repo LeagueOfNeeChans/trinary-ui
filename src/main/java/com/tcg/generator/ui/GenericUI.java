@@ -311,8 +311,6 @@ public class GenericUI {
         Graphics2D g = target.createGraphics();
         g.setFont(elementLayout.getFont());
         
-        FontMetrics fm = g.getFontMetrics();
-        
         MixedMediaText line = new MixedMediaText();
         MarkupElement lastElement;
         MarkupElement lastIcon = null;
@@ -535,6 +533,9 @@ public class GenericUI {
         int index = 0;
         
         for (MixedMediaText mmt: lines) {
+        	System.out.println("MMT: " + mmt);
+        	System.out.println("ELE: " + elementLayout);
+        	
             MarkupElement me;
         
             int offset = 0;

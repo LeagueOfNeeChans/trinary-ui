@@ -6,6 +6,7 @@ import com.tcg.generator.layouts.UIColor;
 import com.tcg.generator.layouts.UIFont;
 import com.tcg.generator.layouts.UILayer;
 import com.tcg.generator.layouts.UILayout;
+import com.tcg.generator.layouts.elements.AnimatedTextBox;
 import com.tcg.generator.layouts.elements.GenericElement;
 import com.tcg.generator.layouts.elements.TextBox;
 
@@ -13,6 +14,7 @@ public class VisualNovelUI extends UI {
 	public String text;
 	
 	public VisualNovelUI(Integer width, Integer height) {
+		//AnimatedTextBox textBox = new AnimatedTextBox();
 		TextBox textBox = new TextBox();
 		GenericElement scene = new GenericElement();
 		
@@ -39,7 +41,6 @@ public class VisualNovelUI extends UI {
 		textBox.setMarginY(20);
 		textBox.setWidth(boxWidth);
 		textBox.setHeight(boxHeight);
-		//textBox.setLayer(new UILayer(new UIColor(255, 255, 255), boxWidth, boxHeight));
 		textBox.setLayer(new UILayer("layers/vanguard/effect-box.png", boxWidth, boxHeight));
 		textBox.setTransparency(0.50);
 		textBox.setFont(new UIFont("Optima", "normal", 12, new UIColor(0, 0, 0)));

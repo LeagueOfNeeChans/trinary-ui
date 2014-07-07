@@ -35,6 +35,68 @@ public class MixedMediaText {
 		}
     }
     
+    public static ArrayList<MixedMediaText> substringList(ArrayList<MixedMediaText> list, Integer endIndex) {
+    	Integer t = 0;
+    	ArrayList<MixedMediaText> subList = new ArrayList<MixedMediaText>();
+    	for (MixedMediaText element: list) {
+    		t += element.length();
+    		
+			if (t >= endIndex) {
+				subList.add(element.substring(element.length() - (t - endIndex)));
+				break;
+			} else {
+				subList.add(element);
+			}
+    	}
+    	
+    	return subList;
+    }
+    
+    public MixedMediaText substring(Integer endIndex) {
+		Integer t = 0;
+		MixedMediaText modded = new MixedMediaText();
+		for (MarkupElement element : elements) {
+			Integer length = 1;
+			
+			if (element instanceof TextInsert) {
+				length = element.getText().length();
+			}
+			
+			t += length;
+			
+			if (element instanceof TextInsert) {
+				String text = "";
+				if (t >= endIndex) {
+					text = element.getText().substring(0, element.getText().length() - (t - endIndex));
+					break;
+				} else {
+					text = element.getText();
+				}
+				 
+				modded.addElement(new TextInsert(text, ((TextInsert)element).getFormatStack()));
+			} else if (element instanceof ImageInsert) {
+				modded.addElement(element);
+			}
+		}
+		
+		return modded;
+    }
+    
+    public Integer length() {
+    	Integer t = 0;
+		for (MarkupElement element : elements) {
+			Integer length = 1;
+			
+			if (element instanceof TextInsert) {
+				length = element.getText().length();
+			}
+			
+			t += length;
+		}
+		
+		return t;
+    }
+    
     public void addElement(MarkupElement me) {
         elements.add(me);
     }
