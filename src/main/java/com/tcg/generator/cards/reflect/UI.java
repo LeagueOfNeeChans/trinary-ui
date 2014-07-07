@@ -115,14 +115,12 @@ public class UI extends GenericUI {
 	                    }
 	                }
             	}
-                //System.out.println("\tLINES: " + lines);
-                
+ 
                 switch(element.getType()) {
                 case "animated-text-box":
                 	if (!cache.containsKey(element.getName())) {
                 		mmtl = splitAndFitMixedText(bi, lines, element);
                 		cache.put(element.getName(), new MixedMediaTextBlock(mmtl, true));
-                		System.out.println("CACHE SET");
                 	}
                 	
                 	System.out.println("DRAWING " + element.getName());
@@ -132,10 +130,7 @@ public class UI extends GenericUI {
                 	if (!cache.containsKey(element.getName())) {
                 		mmtl = splitAndFitMixedText(bi, lines, element);
                 		cache.put(element.getName(), new MixedMediaTextBlock(mmtl, false));
-                		System.out.println("CACHE SET");
                 	}
-                	
-                	System.out.println("DRAWING " + element.getName());
                 	drawMixedMediaText(bi, cache.get(element.getName()).getLines(), element);
                     break;
                 case "table":

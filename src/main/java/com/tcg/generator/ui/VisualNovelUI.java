@@ -14,8 +14,8 @@ public class VisualNovelUI extends UI {
 	public String text;
 	
 	public VisualNovelUI(Integer width, Integer height) {
-		//AnimatedTextBox textBox = new AnimatedTextBox();
-		TextBox textBox = new TextBox();
+		AnimatedTextBox textBox = new AnimatedTextBox();
+		//TextBox textBox = new TextBox();
 		GenericElement scene = new GenericElement();
 		
 		Integer boxWidth  = new Integer((int) Math.round(0.8 * width));
@@ -33,7 +33,7 @@ public class VisualNovelUI extends UI {
 		scene.setTransparency(1.0);
 		
 		textBox.setName("text");
-		textBox.setType("text-box");
+		//textBox.setType("text-box");
 		textBox.setzIndex(2);
 		textBox.setX(boxX);
 		textBox.setY(400);

@@ -532,12 +532,9 @@ public class GenericUI {
         int lineHeight = fm.getHeight();
         int index = 0;
         
-        for (MixedMediaText mmt: lines) {
-        	System.out.println("MMT: " + mmt);
-        	System.out.println("ELE: " + elementLayout);
-        	
-            MarkupElement me;
+        System.out.println("****LINES: " + lines);
         
+        for (MixedMediaText mmt: lines) {
             int offset = 0;
             int spaceWidth = fm.getStringBounds(" ", g).getBounds().width;
             int textBottom = (elementLayout.getY() + elementLayout.getMarginY() + actualHeight) + (index * lineHeight);
@@ -554,9 +551,9 @@ public class GenericUI {
             
             g.setColor(elementLayout.getUiFont().getColor());
             
-            while ((me = mmt.next()) != null) {
+            for (MarkupElement me : mmt.getElements()) {
                 int startX;
-
+                
                 switch (elementLayout.getAlign()) {
                     case "right":
                         startX = (elementLayout.getWidth() - elementLayout.getMarginX() - mmt.getWidth());

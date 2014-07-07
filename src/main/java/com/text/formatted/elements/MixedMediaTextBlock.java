@@ -6,6 +6,7 @@ public class MixedMediaTextBlock {
 	protected ArrayList<MixedMediaText> lines = new ArrayList<MixedMediaText>();
 	protected Integer dIndex = 0;
 	protected Boolean animated = false;
+	protected Integer speed = 500;
 	protected Boolean done = false;
 	
 	public MixedMediaTextBlock(ArrayList<MixedMediaText> lines, Boolean animated) {
@@ -29,17 +30,16 @@ public class MixedMediaTextBlock {
 		return t;
 	}
 	
-	public ArrayList<MixedMediaText> getLines() { 
-		if (!done) {
-			System.out.println("NOT DONE FOR SOME REASON!");
-			if (dIndex < this.length()) {
+	public ArrayList<MixedMediaText> getLines() {
+		if (!this.done) {
+			System.out.println(String.format("%d/%d", this.dIndex, this.length()));
+			
+			if (this.dIndex < this.length()) {
 				return this.substring(dIndex++);
 			} else {
 				this.done = true;
 			}
 		}
-
-		System.out.println("****LINES: " + lines);
 		
 		return lines;
 	}

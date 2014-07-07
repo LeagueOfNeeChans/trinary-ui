@@ -35,23 +35,6 @@ public class MixedMediaText {
 		}
     }
     
-    public static ArrayList<MixedMediaText> substringList(ArrayList<MixedMediaText> list, Integer endIndex) {
-    	Integer t = 0;
-    	ArrayList<MixedMediaText> subList = new ArrayList<MixedMediaText>();
-    	for (MixedMediaText element: list) {
-    		t += element.length();
-    		
-			if (t >= endIndex) {
-				subList.add(element.substring(element.length() - (t - endIndex)));
-				break;
-			} else {
-				subList.add(element);
-			}
-    	}
-    	
-    	return subList;
-    }
-    
     public MixedMediaText substring(Integer endIndex) {
 		Integer t = 0;
 		MixedMediaText modded = new MixedMediaText();
@@ -178,5 +161,9 @@ public class MixedMediaText {
 			
 			formatStack.pop();
 		}
+	}
+	
+	public ArrayList<MarkupElement> getElements() {
+		return elements;
 	}
 }
