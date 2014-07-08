@@ -51,11 +51,11 @@ public class MixedMediaText {
 				String text = "";
 				if (t >= endIndex) {
 					text = element.getText().substring(0, element.getText().length() - (t - endIndex));
+					modded.addElement(new TextInsert(text, ((TextInsert)element).getFormatStack()));
 					break;
-				} else {
-					text = element.getText();
 				}
-				 
+				
+				text = element.getText();
 				modded.addElement(new TextInsert(text, ((TextInsert)element).getFormatStack()));
 			} else if (element instanceof ImageInsert) {
 				modded.addElement(element);

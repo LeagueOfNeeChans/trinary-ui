@@ -50,7 +50,7 @@ public class GFXCore {
 			g.drawImage(ui.render(), null, x, y);
 			
 			strategy.show();
-			try { Thread.sleep(60); } catch (Exception e) {}
+			try { Thread.sleep(10); } catch (Exception e) {}
 		}
 	}
 }
