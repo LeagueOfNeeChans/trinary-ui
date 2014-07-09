@@ -4,17 +4,15 @@
  */
 package com.text.formatted.elements;
 
-import com.tcg.generator.layouts.elements.GenericElement;
+import java.util.ArrayList;
+import java.util.Stack;
+
 import com.trinary.parse.xml.Formatting;
 import com.trinary.parse.xml.FormattingType;
 import com.trinary.parse.xml.XmlBlock;
 import com.trinary.parse.xml.XmlElement;
 import com.trinary.parse.xml.XmlTagElement;
 import com.trinary.parse.xml.XmlTextElement;
-
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Stack;
 
 /**
  *
@@ -112,22 +110,6 @@ public class MixedMediaText {
             s += element;
         }
         return s;
-    }
-    
-    public MarkupElement next() {
-        if (iter < elements.size()) {
-            return elements.get(iter++);
-        } else {
-            return null;
-        }
-    }
-    
-    public void reset() {
-        iter = 0;
-    }
-    
-    public void drawTo(BufferedImage bi, GenericElement layout) {
-        
     }
     
 	private void renderElement(XmlElement element) {

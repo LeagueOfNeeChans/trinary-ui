@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import com.tcg.generator.config.ConfigHolder;
-import com.tcg.generator.layouts.Resource;
 import com.text.formatted.elements.ImageInsert;
 import com.text.formatted.elements.MarkupElement;
 import com.text.formatted.elements.MixedMediaText;
@@ -87,10 +86,9 @@ public class FormattedTextElement extends GraphicElement {
         
         ArrayList<MixedMediaText> lines = new ArrayList<>();
         
-        MarkupElement element;
         int maxWidth = (this.width - marginX * 2);
         
-        while((element = text.next()) != null) {
+        for (MarkupElement element : text.getElements()) {
             if (element instanceof ImageInsert) {
                 iconWidth += this.getResource(element.getText()).getWidth();
             } else if (element instanceof TextInsert) {

@@ -4,8 +4,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.tcg.generator.layouts.Resource;
-
 public abstract class UIElement {
 	protected int x, y;
 	protected int width, height;
