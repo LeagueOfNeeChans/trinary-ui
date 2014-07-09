@@ -1,4 +1,4 @@
-package com.tcg.generator.tests;
+package com.trinary.ui.tests;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
@@ -7,7 +7,8 @@ import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
 
-import com.tcg.generator.config.ConfigHolder;
+import com.trinary.ui.config.ConfigHolder;
+import com.trinary.ui.config.ResourceStore;
 import com.trinary.ui.elements.FormattedTextElement;
 import com.trinary.ui.elements.GraphicElement;
 
@@ -37,6 +38,8 @@ public class GFXCore {
 	
 	public void mainLoop() {
 		ConfigHolder.setConfig("rootDirectory", "src/main/resources/");
+		ResourceStore.addResource("sword", "resources/vanguard/sword.png");
+		
 		GraphicElement container = new GraphicElement(0, 0, 800, 600, "art/miku.jpg");
 		
 		FormattedTextElement textBox = new FormattedTextElement((800 - (int)(.8 * 800))/2, 350, (int)(.8 * 800), 200);
@@ -44,7 +47,6 @@ public class GFXCore {
 		textBox.setMarginX(20);
 		textBox.setMarginY(20);
 		textBox.setTransparency(0.75f);
-		textBox.addResource("sword", "resources/vanguard/sword.png");
 		textBox.setText("This is <b>test</b> text.  This <i><b>is</b></i> also a test.  "
 				+ "My anus is bleeding please help me why won't <b>anyone</b> help me oh "
 				+ "gosh there's <i color='#FF0000'>blood</i> everywhere help me why isn't anyone helping me "

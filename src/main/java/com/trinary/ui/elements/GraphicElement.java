@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.tcg.generator.config.ConfigHolder;
+import com.trinary.ui.config.ConfigHolder;
 
 public class GraphicElement extends UIElement {	
 	public GraphicElement(int x, int y, int width, int height) {

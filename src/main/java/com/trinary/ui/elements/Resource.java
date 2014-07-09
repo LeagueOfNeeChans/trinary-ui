@@ -6,10 +6,12 @@ package com.trinary.ui.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tcg.generator.config.ConfigHolder;
+import com.trinary.ui.config.ConfigHolder;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 
 /**

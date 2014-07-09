@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tcg.generator.config;
+package com.trinary.ui.config;
 
 import java.util.HashMap;
 

@@ -2,7 +2,6 @@ package com.trinary.ui.elements;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public abstract class UIElement {
 	protected int x, y;
@@ -14,8 +13,6 @@ public abstract class UIElement {
 	
 	protected UIElement parent = null;
 	protected ArrayList<UIElement> children = new ArrayList<>();
-	
-	protected HashMap<String, Resource> resources = new HashMap<>();
 	
 	public UIElement() {
 		// TODO Auto-generated constructor stub
@@ -76,14 +73,6 @@ public abstract class UIElement {
 	public void addChild(UIElement child) {
 		child.parent = this;
 		this.children.add(child);
-	}
-	
-	public void addResource(String name, String filename) {
-		resources.put(name, new Resource(filename, name));
-	}
-	
-	public Resource getResource(String name) {
-		return resources.get(name);
 	}
 	
 	public BufferedImage getLayer() {

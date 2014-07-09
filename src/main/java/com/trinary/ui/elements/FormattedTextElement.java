@@ -8,12 +8,13 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import com.tcg.generator.config.ConfigHolder;
 import com.text.formatted.elements.ImageInsert;
 import com.text.formatted.elements.MarkupElement;
 import com.text.formatted.elements.MixedMediaText;
 import com.text.formatted.elements.MixedMediaTextBlock;
 import com.text.formatted.elements.TextInsert;
+import com.trinary.ui.config.ConfigHolder;
+import com.trinary.ui.config.ResourceStore;
 
 public class FormattedTextElement extends GraphicElement {
 	protected MixedMediaTextBlock mmtb;
@@ -90,7 +91,7 @@ public class FormattedTextElement extends GraphicElement {
         
         for (MarkupElement element : text.getElements()) {
             if (element instanceof ImageInsert) {
-                iconWidth += this.getResource(element.getText()).getWidth();
+                iconWidth += ResourceStore.getResource(element.getText()).getWidth();
             } else if (element instanceof TextInsert) {
             	TextInsert ti = (TextInsert)element;
             	
@@ -127,14 +128,14 @@ public class FormattedTextElement extends GraphicElement {
                 formattedTextWidth = 0;
                                 
                 if (lastIcon != null) {
-                    iconWidth += this.getResource(lastIcon.getText()).getWidth();
+                    iconWidth += ResourceStore.getResource(lastIcon.getText()).getWidth();
                     line.addElement(lastIcon);
                     lastIcon = null;
                 }
                 line.addElement(lastElement);
                 
                 if (lastElement instanceof ImageInsert) {
-                    iconWidth += this.getResource(lastElement.getText()).getWidth();
+                    iconWidth += ResourceStore.getResource(lastElement.getText()).getWidth();
                 } else if (lastElement instanceof TextInsert) {
                 	TextInsert ti = (TextInsert)element;
                 	
@@ -226,7 +227,7 @@ public class FormattedTextElement extends GraphicElement {
                     g.drawString(me.getText(), 0 + startX + offset, textBottom);
                     offset += fm.getStringBounds(me.getText(), g).getBounds().width + spaceWidth;
                 } else if (me instanceof ImageInsert) {
-                    Resource r = this.getResource(me.getText());
+                    Resource r = ResourceStore.getResource(me.getText());
                     Integer larger = Math.max(r.getHeight(), actualHeight);
                     Integer diff = Math.abs(r.getHeight() - actualHeight);
                     Integer correction = (int)Math.round((double)diff/2.0);
