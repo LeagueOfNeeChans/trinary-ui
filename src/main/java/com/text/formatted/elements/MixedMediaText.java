@@ -133,7 +133,9 @@ public class MixedMediaText {
 	private void renderElement(XmlElement element) {
 		if (element instanceof XmlTextElement) {
 			for (String text : element.getText().split(" ")) {
-				elements.add(new TextInsert(text, formatStack));
+				if (!text.isEmpty() && !text.equals(" ")) {
+					elements.add(new TextInsert(text, formatStack));
+				}
 			}
 		} else if (element instanceof XmlTagElement) {
 			XmlTagElement tag = (XmlTagElement)element;

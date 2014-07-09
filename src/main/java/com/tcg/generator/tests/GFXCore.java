@@ -8,14 +8,13 @@ import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 
 import com.tcg.generator.config.ConfigHolder;
-import com.tcg.generator.ui.VisualNovelUI;
+import com.trinary.ui.elements.FormattedTextElement;
+import com.trinary.ui.elements.GraphicElement;
 
 public class GFXCore {
 	private JFrame container;
 	private Canvas canvas;
 	private Boolean running = true;
-	private Integer x = 0;
-	private Integer y = 0;
 	
 	BufferStrategy strategy;
 	
@@ -38,16 +37,24 @@ public class GFXCore {
 	
 	public void mainLoop() {
 		ConfigHolder.setConfig("rootDirectory", "src/main/resources/");
-		VisualNovelUI ui = new VisualNovelUI(800, 600);
-		ui.setText("This is <b>test</b> text.  This <i><b>is</b></i> also a test.  "
+		GraphicElement container = new GraphicElement(0, 0, 800, 600, "art/miku.jpg");
+		
+		FormattedTextElement textBox = new FormattedTextElement((800 - (int)(.8 * 800))/2, 350, (int)(.8 * 800), 200);
+		textBox.setLayer("layers/vanguard/effect-box.png");
+		textBox.setMarginX(20);
+		textBox.setMarginY(20);
+		textBox.setTransparency(0.75f);
+		textBox.addResource("sword", "resources/vanguard/sword.png");
+		textBox.setText("This is <b>test</b> text.  This <i><b>is</b></i> also a test.  "
 				+ "My anus is bleeding please help me why won't <b>anyone</b> help me oh "
 				+ "gosh there's <i color='#FF0000'>blood</i> everywhere help me why isn't anyone helping me "
 				+ "oh god I can see Jesus's eyes!  Why have you forsaken me oh lord?  Give me a "
-				+ "<img src='sword' /> I will do it myself!");
+				+ "<img src='sword' /> I will do it myself!", true);
+		container.addChild(textBox);
 		
 		while (running) {
 			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();
-			g.drawImage(ui.render(), null, x, y);
+			g.drawImage(container.render(), null, 0, 0);
 			
 			strategy.show();
 			try { Thread.sleep(10); } catch (Exception e) {}
