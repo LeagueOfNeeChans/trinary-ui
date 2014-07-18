@@ -11,6 +11,7 @@ import com.trinary.ui.config.ConfigHolder;
 import com.trinary.ui.config.ResourceStore;
 import com.trinary.ui.elements.FormattedTextElement;
 import com.trinary.ui.elements.GraphicElement;
+import com.trinary.ui.elements.ResourceElement;
 
 public class GFXCore {
 	private JFrame container;
@@ -38,21 +39,31 @@ public class GFXCore {
 	
 	public void mainLoop() {
 		ConfigHolder.setConfig("rootDirectory", "src/main/resources/");
-		ResourceStore.addResource("sword", "resources/vanguard/sword.png");
+		ResourceStore.addFolder("resources/vanguard");
+		ResourceStore.addFolder("vn/actors");
 		
-		GraphicElement container = new GraphicElement(0, 0, 800, 600, "art/miku.jpg");
+		GraphicElement container = new GraphicElement(0, 0, 800, 600, "vn/scenes/hallway.jpg");
+		container.setzIndex(0);
+		
+		ResourceElement actor1 = new ResourceElement();
+		actor1.changeResource("actor_neutral");
+		actor1.move(400, 0);
+		actor1.setzIndex(1);
 		
 		FormattedTextElement textBox = new FormattedTextElement((800 - (int)(.8 * 800))/2, 350, (int)(.8 * 800), 200);
 		textBox.setLayer("layers/vanguard/effect-box.png");
 		textBox.setMarginX(20);
 		textBox.setMarginY(20);
 		textBox.setTransparency(0.75f);
+		textBox.setzIndex(2);
 		textBox.setText("This is <b>test</b> text.  This <i><b>is</b></i> also a test.  "
 				+ "My anus is bleeding please help me why won't <b>anyone</b> help me oh "
 				+ "gosh there's <i color='#FF0000'>blood</i> everywhere help me why isn't anyone helping me "
 				+ "oh god I can see Jesus's eyes!  Why have you forsaken me oh lord?  Give me a "
 				+ "<img src='sword' /> I will do it myself!", true);
+		
 		container.addChild(textBox);
+		container.addChild(actor1);
 		
 		while (running) {
 			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();

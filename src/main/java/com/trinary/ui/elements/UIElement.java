@@ -3,10 +3,11 @@ package com.trinary.ui.elements;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public abstract class UIElement {
+public abstract class UIElement implements Comparable<UIElement> {
 	protected int x, y;
 	protected int width, height;
 	protected float transparency = 1.0f;
+	protected int zIndex = 0;
 	
 	protected BufferedImage bi;
 	protected BufferedImage surface;
@@ -85,6 +86,19 @@ public abstract class UIElement {
 
 	public void setTransparency(float transparency) {
 		this.transparency = transparency;
+	}
+	
+	public int getzIndex() {
+		return zIndex;
+	}
+
+	public void setzIndex(int zIndex) {
+		this.zIndex = zIndex;
+	}
+	
+	@Override
+	public int compareTo(UIElement o) {
+		return new Integer(zIndex).compareTo(new Integer(o.zIndex));
 	}
 
 	public abstract BufferedImage render();

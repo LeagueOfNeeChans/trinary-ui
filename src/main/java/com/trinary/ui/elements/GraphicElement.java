@@ -8,12 +8,17 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.imageio.ImageIO;
 
 import com.trinary.ui.config.ConfigHolder;
 
-public class GraphicElement extends UIElement {	
+public class GraphicElement extends UIElement {
+	public GraphicElement() {
+		super(0, 0, 0, 0);
+	}
+	
 	public GraphicElement(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -62,6 +67,19 @@ public class GraphicElement extends UIElement {
 		this.bi = bi;
 	}
 	
+	public void refreshLayer() {
+		BufferedImage bi = this.bi;
+		
+		this.bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		
+		Graphics2D g = this.bi.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		
+		g.drawImage(bi, 0, 0, width, height, null);
+	}
+	
 	public void setLayer(String filename) {
 		BufferedImage bi;
 		try {
@@ -80,6 +98,7 @@ public class GraphicElement extends UIElement {
 	}
 	
 	public void renderChildren() {
+		Collections.sort(children);
 		for (UIElement element : children) {
 			BufferedImage ebi = element.render();
 			
