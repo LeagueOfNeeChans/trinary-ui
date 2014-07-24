@@ -3,6 +3,7 @@ package com.trinary.ui.elements;
 import java.awt.image.BufferedImage;
 
 import com.trinary.ui.config.ResourceStore;
+import com.trinary.util.Location;
 
 public class ResourceElement extends GraphicElement {
 	public void changeResource(String name) {
@@ -26,6 +27,28 @@ public class ResourceElement extends GraphicElement {
 	public void move(int x, int y) {
 		this.x = x;
 		this.y = y;
+	}
+	
+	public void move(Location location) {
+		if (location.getLeft() != null) {
+			this.x = location.getLeft();
+		} else if (location.getRight() != null) {
+			this.x = location.getRight() - this.width;
+		}
+		
+		if (location.getTop() != null) {
+			this.y = location.getTop();
+		} else if (location.getBottom() != null) {
+			this.y = location.getBottom() - this.height;
+		}
+	}
+	
+	public void moveAndScale(Location location) {
+		this.x = location.getLeft();
+		this.y = location.getTop();
+		
+		this.width = location.getRight() - location.getLeft();
+		this.height = location.getBottom() - location.getTop();
 	}
 	
 	public void scale(float percent) {

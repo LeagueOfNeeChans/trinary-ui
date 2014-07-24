@@ -246,4 +246,8 @@ public class FormattedTextElement extends GraphicElement {
     	
     	return this.surface;
     }
+    
+    public Boolean isDone() {
+    	return mmtb.getDone();
+    }
 }
