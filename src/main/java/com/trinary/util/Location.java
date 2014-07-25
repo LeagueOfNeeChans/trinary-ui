@@ -7,6 +7,10 @@ public class Location {
 				bottom = null, 
 				right = null;
 	
+	public Location() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public Location(Integer left, Integer top, Integer right, Integer bottom) {
 		this.top = top;
 		this.left = left;

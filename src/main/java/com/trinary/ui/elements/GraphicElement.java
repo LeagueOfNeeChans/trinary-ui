@@ -16,7 +16,7 @@ import com.trinary.ui.config.ConfigHolder;
 
 public class GraphicElement extends UIElement {
 	public GraphicElement() {
-		super(0, 0, 0, 0);
+		super(0, 0, 1, 1);
 	}
 	
 	public GraphicElement(int x, int y, int width, int height) {
@@ -86,6 +86,7 @@ public class GraphicElement extends UIElement {
 			bi = ImageIO.read(new File(ConfigHolder.getConfig("rootDirectory") + filename));
 			
 			this.bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			
 			Graphics2D g = this.bi.createGraphics();
 	        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -112,7 +113,7 @@ public class GraphicElement extends UIElement {
 	        
 	        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, element.transparency);
 	        g.setComposite(comp);
-	        g.drawImage(ebi, null, element.x, element.y);
+	        g.drawImage(ebi, null, element.getX(), element.getY());
 		}
 	}
 	

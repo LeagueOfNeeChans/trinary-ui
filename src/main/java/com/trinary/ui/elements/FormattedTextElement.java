@@ -28,6 +28,10 @@ public class FormattedTextElement extends GraphicElement {
 		super(x, y, width, height);
 	}
 	
+	public FormattedTextElement() {
+		super();
+	}
+
 	public void setDefaultFont(Font font) {
 		this.defaultFont = font;
 	}
