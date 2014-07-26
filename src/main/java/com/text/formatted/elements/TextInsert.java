@@ -53,8 +53,6 @@ public class TextInsert extends MarkupElement {
 	    		Integer g = Integer.decode("0x" + green);
 	    		Integer b = Integer.decode("0x" + blue);
 	    		
-	    		System.out.println(String.format("COLOR: %3d, %3d, %3d", r, g, b));
-	    		
 	    		color = new Color(r, g, b);
     		}
     	}
@@ -66,8 +64,6 @@ public class TextInsert extends MarkupElement {
     	int font = 0;
     	
     	for (Formatting formatting : formatStack) {
-    		System.out.println("FONT WEIGHT: " + formatting);
-    		
     		switch (formatting.getType()) {
 			case BOLD:
 				font += Font.BOLD;

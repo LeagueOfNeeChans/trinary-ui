@@ -158,15 +158,12 @@ public class FormattedTextElement extends GraphicElement {
                 }
             }
         }
-        System.out.println("LINE: " + line);
         lines.add(line);
         
         return lines;
     }
     
     public void renderText() {
-    	System.out.println("RENDER- FORMATTEDTEXTELEMENT");
-    	
         Graphics2D g = this.surface.createGraphics();
         g.setFont(this.defaultFont);
         g.setColor(this.defaultFontColor);
@@ -253,5 +250,33 @@ public class FormattedTextElement extends GraphicElement {
     
     public Boolean isDone() {
     	return mmtb.getDone();
+    }
+    
+    public void setDone() {
+    	mmtb.setDone();
+    }
+    
+    public Boolean isSkipped() {
+    	return mmtb.getSkipped();
+    }
+    
+    public void setSkipped() {
+    	mmtb.setSkipped();
+    }
+    
+    public Boolean isPaused() {
+    	return mmtb.getPaused();
+    }
+    
+    public void pause() {
+    	this.mmtb.pause();
+    }
+    
+    public void unpause() {
+    	this.mmtb.unpause();
+    }
+    
+    public void togglePause() {
+    	this.mmtb.togglePause();
     }
 }

@@ -7,6 +7,9 @@ public class MixedMediaTextBlock {
 	protected Integer dIndex = 0;
 	protected Boolean animated = false;
 	protected Integer speed = 500;
+	
+	protected Boolean skipped = false;
+	protected Boolean paused = false;
 	protected Boolean done = false;
 	
 	public MixedMediaTextBlock(ArrayList<MixedMediaText> lines, Boolean animated) {
@@ -31,11 +34,15 @@ public class MixedMediaTextBlock {
 	}
 	
 	public ArrayList<MixedMediaText> getLines() {
-		if (!this.done) {
-			System.out.println(String.format("%d/%d", this.dIndex, this.length()));
-			
+		if (!this.done && !this.skipped) {
 			if (this.dIndex < this.length()) {
-				return this.substring(dIndex++);
+				ArrayList<MixedMediaText> sub = this.substring(dIndex);
+				
+				if (!paused) {
+					dIndex++;
+				}
+				
+				return sub;
 			} else {
 				this.done = true;
 			}
@@ -60,8 +67,36 @@ public class MixedMediaTextBlock {
     	
     	return subList;
     }
+    
+    public void setDone() {
+    	this.done = true;
+    }
 
 	public Boolean getDone() {
 		return done;
+	}
+
+	public Boolean getSkipped() {
+		return skipped;
+	}
+
+	public void setSkipped() {
+		this.skipped = true;
+	}
+
+	public Boolean getPaused() {
+		return paused;
+	}
+
+	public void pause() {
+		this.paused = true;
+	}
+	
+	public void unpause() {
+		this.paused = false;
+	}
+	
+	public void togglePause() {
+		this.paused = !this.paused;
 	}
 }

@@ -3,6 +3,8 @@ package com.trinary.ui.tests;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.util.HashMap;
 
@@ -14,7 +16,7 @@ import com.trinary.ui.elements.FormattedTextElement;
 import com.trinary.ui.elements.ResourceElement;
 import com.trinary.util.Location;
 
-public class GFXCore {
+public class GFXCore implements KeyListener {
 	private JFrame container;
 	private Canvas canvas;
 	private Boolean running = true;
@@ -29,6 +31,7 @@ public class GFXCore {
 	public GFXCore() {	
 		container = new JFrame("League of Nee-chans");
 		container.setPreferredSize(new Dimension(800, 600));
+		container.addKeyListener(this);
 		
 		canvas = new Canvas();
 		canvas.setPreferredSize(new Dimension(800, 600));
@@ -47,7 +50,6 @@ public class GFXCore {
 		ResourceStore.addFolder("vn/actors");
 		ResourceStore.addFolder("vn/scenes");
 		
-		//gfxContainer = new GraphicElement(0, 0, 800, 600, "vn/scenes/hallway.jpg");
 		gfxContainer = new ResourceElement();
 		gfxContainer.changeResource("hallway");
 		gfxContainer.setWidth(800);
@@ -96,6 +98,18 @@ public class GFXCore {
 		actors.get(actor).move(x, y);
 	}
 	
+	public void skip() {
+		if (textBox.isSkipped()) {
+			textBox.setDone();
+			return;
+		}
+		textBox.setSkipped();
+	}
+	
+	public void pause() {
+		textBox.togglePause();
+	}
+	
 	public void mainLoop() {
 		int pageCount = 0;
 
@@ -106,12 +120,6 @@ public class GFXCore {
 		
 		while (running) {
 			if (textBox.isDone() && pageCount == 0) {
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				this.setText("Why are <b>you</b> looking at me like <i>that</i>?  And how did we teleport to "
 						+ "this classroom in completely different country?!");
 				this.changeActorMood("girl-chan", "actor_embarrassed");
@@ -125,5 +133,29 @@ public class GFXCore {
 			strategy.show();
 			try { Thread.sleep(10); } catch (Exception e) {}
 		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		switch(e.getKeyChar()) {
+		case KeyEvent.VK_ESCAPE:
+			this.pause();
+			break;
+		case KeyEvent.VK_ENTER:
+		default:
+			this.skip();
+			break;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

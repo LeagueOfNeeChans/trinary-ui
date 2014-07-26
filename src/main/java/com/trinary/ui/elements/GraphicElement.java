@@ -109,8 +109,6 @@ public class GraphicElement extends UIElement {
 	        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 	        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 	        
-	        System.out.println("TRANSPARENCY: " + element.transparency);
-	        
 	        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, element.transparency);
 	        g.setComposite(comp);
 	        g.drawImage(ebi, null, element.getX(), element.getY());
