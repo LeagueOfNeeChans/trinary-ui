@@ -44,7 +44,7 @@ public class MixedMediaTextBlock {
 				
 				return sub;
 			} else {
-				this.done = true;
+				this.skipped = true;
 			}
 		}
 		

@@ -60,12 +60,12 @@ public class GFXCore implements KeyListener {
 		
 		actors.put("girl-chan", gfxContainer.addChild(ResourceElement.class));
 		actors.get("girl-chan").changeResource("actor_neutral");
-		actors.get("girl-chan").move(new Location(null, 0, 800, null));
+		actors.get("girl-chan").move(new Location("right: 800, bottom: 600"));
 		actors.get("girl-chan").setzIndex(1);
 		
 		textBox.setWidthP(.80);
 		textBox.setHeightP(.30);
-		textBox.move(new Location(0, null, null, 550));
+		textBox.move(new Location("bottom: 550"));
 		textBox.center();
 		textBox.setMarginX(20);
 		textBox.setMarginY(20);
