@@ -11,6 +11,8 @@ public abstract class UIElement implements Comparable<UIElement> {
 	protected float transparency = 1.0f;
 	protected int zIndex = 0;
 	
+	protected float brightness = 1.0f;
+	
 	protected BufferedImage bi;
 	protected BufferedImage surface;
 	
@@ -149,6 +151,14 @@ public abstract class UIElement implements Comparable<UIElement> {
 		this.zIndex = zIndex;
 	}
 	
+	public float getBrightness() {
+		return brightness;
+	}
+
+	public void setBrightness(float brightness) {
+		this.brightness = brightness;
+	}
+
 	@Override
 	public int compareTo(UIElement o) {
 		return new Integer(zIndex).compareTo(new Integer(o.zIndex));

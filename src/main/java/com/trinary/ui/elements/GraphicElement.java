@@ -6,6 +6,7 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -117,7 +118,15 @@ public class GraphicElement extends UIElement {
 	
 	public BufferedImage render() {
 		Graphics2D g = surface.createGraphics();
-		g.drawImage(bi, null, 0, 0);
+		BufferedImage adjusted = bi;
+		
+		// Apply post processing
+		if (brightness != 1.0f) {
+			RescaleOp op = new RescaleOp(brightness, 0, null);
+			adjusted = op.filter(bi, null);
+		}
+		
+		g.drawImage(adjusted, null, 0, 0);
 		
         this.renderChildren();
         return this.surface;

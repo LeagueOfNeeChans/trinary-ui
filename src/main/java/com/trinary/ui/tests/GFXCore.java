@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 
 import com.trinary.ui.config.ConfigHolder;
 import com.trinary.ui.config.ResourceStore;
+import com.trinary.ui.elements.AnimatedElement;
 import com.trinary.ui.elements.FormattedTextElement;
 import com.trinary.ui.elements.ResourceElement;
 import com.trinary.util.Location;
@@ -20,13 +21,14 @@ public class GFXCore implements KeyListener {
 	private JFrame container;
 	private Canvas canvas;
 	private Boolean running = true;
+	private Boolean paused = false;
 	
 	private BufferStrategy strategy;
 	
 	private ResourceElement gfxContainer;
 	private FormattedTextElement textBox;
 	
-	private HashMap<String, ResourceElement> actors = new HashMap<>();
+	private HashMap<String, AnimatedElement> actors = new HashMap<>();
 	
 	public GFXCore() {	
 		container = new JFrame("League of Nee-chans");
@@ -58,7 +60,7 @@ public class GFXCore implements KeyListener {
 		
 		textBox = gfxContainer.addChild(FormattedTextElement.class);
 		
-		actors.put("girl-chan", gfxContainer.addChild(ResourceElement.class));
+		actors.put("girl-chan", gfxContainer.addChild(AnimatedElement.class));
 		actors.get("girl-chan").changeResource("actor_neutral");
 		actors.get("girl-chan").move(new Location("right: 800, bottom: 600"));
 		actors.get("girl-chan").setzIndex(1);
@@ -83,7 +85,7 @@ public class GFXCore implements KeyListener {
 	}
 	
 	public void addActor(String actor, Integer position) {
-		actors.put(actor, gfxContainer.addChild(ResourceElement.class));
+		actors.put(actor, gfxContainer.addChild(AnimatedElement.class));
 	}
 	
 	public void setText(String text) {
@@ -91,7 +93,7 @@ public class GFXCore implements KeyListener {
 	}
 	
 	public void changeActorMood(String actor, String mood) {
-		actors.get(actor).changeResource(mood);
+		actors.get(actor).transitionInto(mood, "fadeInto");
 	}
 	
 	public void moveActor(String actor, int x, int y) {
@@ -108,6 +110,21 @@ public class GFXCore implements KeyListener {
 	
 	public void pause() {
 		textBox.togglePause();
+		paused = !paused;
+		
+		for (ResourceElement actor : actors.values()) {
+			if (paused) {
+				actor.setBrightness(0.5f);
+			} else {
+				actor.setBrightness(1.0f);
+			}
+		}
+		
+		if (paused) {
+			gfxContainer.setBrightness(0.5f);
+		} else {
+			gfxContainer.setBrightness(1.0f);
+		}
 	}
 	
 	public void mainLoop() {
