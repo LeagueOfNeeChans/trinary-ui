@@ -110,7 +110,7 @@ public class GraphicElement extends UIElement {
 	        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 	        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 	        
-	        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, element.transparency);
+	        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, new Float(element.transparency));
 	        g.setComposite(comp);
 	        g.drawImage(ebi, null, element.getX(), element.getY());
 		}
@@ -122,7 +122,7 @@ public class GraphicElement extends UIElement {
 		
 		// Apply post processing
 		if (brightness != 1.0f) {
-			RescaleOp op = new RescaleOp(brightness, 0, null);
+			RescaleOp op = new RescaleOp(new Float(brightness), 0, null);
 			adjusted = op.filter(bi, null);
 		}
 		

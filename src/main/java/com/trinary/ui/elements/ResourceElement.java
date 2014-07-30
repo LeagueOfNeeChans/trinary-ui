@@ -9,7 +9,7 @@ public class ResourceElement extends GraphicElement {
 		super();
 	}
 	
-	public void changeResource(String name) {
+	public void changeResource(String name, Boolean perserveDimensions) {
 		Resource r = ResourceStore.getResource(name);
 		
 		if (r == null) {
@@ -17,8 +17,11 @@ public class ResourceElement extends GraphicElement {
 		}
 		
 		this.bi = r.getImage();
-		this.width = r.getWidth();
-		this.height = r.getHeight();
+		
+		if (perserveDimensions) {
+			this.width = r.getWidth();
+			this.height = r.getHeight();
+		}
 		
 		this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	}

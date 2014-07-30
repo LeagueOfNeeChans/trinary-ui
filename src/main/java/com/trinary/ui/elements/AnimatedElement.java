@@ -23,7 +23,7 @@ public class AnimatedElement extends ResourceElement {
 	protected void fadingOut() {
 		if (this.transparency == 0.0f) {
 			state = "fadingIn";
-			this.changeResource(transitioningInto);
+			this.changeResource(transitioningInto, true);
 		} else {
 			if (transparency - 0.1f < 0) {
 				transparency = 0.0f;

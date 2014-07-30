@@ -8,10 +8,12 @@ import com.trinary.util.Location;
 public abstract class UIElement implements Comparable<UIElement> {
 	protected Location pos = new Location();
 	protected int width, height;
-	protected float transparency = 1.0f;
 	protected int zIndex = 0;
 	
 	protected float brightness = 1.0f;
+	protected float transparency = 1.0f;
+	protected String hAlign = "none";
+	protected String vAlign = "none";
 	
 	protected BufferedImage bi;
 	protected BufferedImage surface;
@@ -25,8 +27,7 @@ public abstract class UIElement implements Comparable<UIElement> {
 	
 	public UIElement(int x, int y, int width, int height) {
 		super();
-		this.pos.setLeft(x);
-		this.pos.setTop(y);
+		this.pos = new Location(String.format("left: %d, top: %d", x, y));
 		this.width = width;
 		this.height = height;
 	}
@@ -54,39 +55,80 @@ public abstract class UIElement implements Comparable<UIElement> {
 		}
 	}
 	
-	public void center() {
-		if (parent != null) {
-			int x = (parent.width - this.width)/2;
-			this.pos.setLeft(x);
-		}
+	public void sethAlign(String hAlign) {
+		this.hAlign = hAlign;
 	}
-	
+
+	public void setvAlign(String vAlign) {
+		this.vAlign = vAlign;
+	}
+
 	public int getX() {
+		switch (this.hAlign) {
+		case "center":
+			return (parent.width - this.width)/2;
+		case "right":
+			return parent.width - this.width;
+		case "left":
+			return 0;
+		case "none":
+		default:
+			break;
+		}
+		
 		if (this.pos.getLeft() != null) {
-			return this.pos.getLeft();
+			if (this.pos.getLeft().isPercentage()) {
+				return (int) (this.pos.getLeft().getPos()/100.0f * this.parent.getWidth());
+			} else {
+				return this.pos.getLeft().getPos();
+			}
 		} else if (this.pos.getRight() != null) {
-			return this.pos.getRight() - this.width;
+			if (this.pos.getRight().isPercentage()) {
+				return (int) ((this.pos.getRight().getPos()/100.0f * this.parent.getWidth()) - this.width);
+			} else {
+				return this.pos.getRight().getPos() - this.width;
+			}
 		} else {
 			return 0;
 		}
 	}
 	
 	public int getY() {
+		switch (this.vAlign) {
+		case "center":
+			return (parent.height - this.height)/2;
+		case "top":
+			return 0;
+		case "bottom":
+			return parent.height - this.height;
+		case "none":
+		default:
+			break;
+		}
+		
 		if (this.pos.getTop() != null) {
-			return this.pos.getTop();
+			if (this.pos.getTop().isPercentage()) {
+				return (int) (this.pos.getTop().getPos()/100.0f * this.parent.getHeight());
+			} else {
+				return this.pos.getTop().getPos();
+			}
 		} else if (this.pos.getBottom() != null) {
-			return this.pos.getBottom() - this.height;
+			if (this.pos.getBottom().isPercentage()) {
+				return (int) (this.pos.getBottom().getPos()/100.0f * this.parent.getHeight() - this.height);
+			} else {
+				return this.pos.getBottom().getPos() - this.height;
+			}
 		} else {
 			return 0;
 		}
 	}
 	
 	public void setX(int x) {
-		this.pos.setLeft(x);
+		this.pos.getLeft().setPos(x);
 	}
 	
 	public void setY(int y) {
-		this.pos.setTop(y);
+		this.pos.getTop().setPos(y);
 	}
 	
 	public void move(int x, int y) {

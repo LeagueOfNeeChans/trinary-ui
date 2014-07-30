@@ -36,7 +36,7 @@ public class GFXCore implements KeyListener {
 		container.addKeyListener(this);
 		
 		canvas = new Canvas();
-		canvas.setPreferredSize(new Dimension(800, 600));
+		canvas.setPreferredSize(new Dimension(container.getWidth(), container.getHeight()));
 		canvas.setVisible(true);
 		
 		container.setResizable(false);
@@ -53,27 +53,33 @@ public class GFXCore implements KeyListener {
 		ResourceStore.addFolder("vn/scenes");
 		
 		gfxContainer = new ResourceElement();
-		gfxContainer.changeResource("hallway");
-		gfxContainer.setWidth(800);
-		gfxContainer.setHeight(600);
+		gfxContainer.setWidth(container.getWidth());
+		gfxContainer.setHeight(container.getHeight());
+		gfxContainer.changeResource("hallway", false);
+		
 		gfxContainer.setzIndex(0);
 		
 		textBox = gfxContainer.addChild(FormattedTextElement.class);
 		
 		actors.put("girl-chan", gfxContainer.addChild(AnimatedElement.class));
-		actors.get("girl-chan").changeResource("actor_neutral");
-		actors.get("girl-chan").move(new Location("right: 800, bottom: 600"));
+		actors.get("girl-chan").changeResource("actor_neutral", true);
+		actors.get("girl-chan").move(new Location("right: 100%, bottom: 100%"));
+		//actors.get("girl-chan").move(new Location("right:  800px, bottom: 600px"));
 		actors.get("girl-chan").setzIndex(1);
 		
 		textBox.setWidthP(.80);
 		textBox.setHeightP(.30);
-		textBox.move(new Location("bottom: 550"));
-		textBox.center();
+		textBox.move(new Location("bottom: 90%"));
+		//textBox.move(new Location("bottom: 550px"));
+		textBox.sethAlign("center");;
 		textBox.setMarginX(20);
 		textBox.setMarginY(20);
 		textBox.setTransparency(0.75f);
 		textBox.setzIndex(2);
 		textBox.setLayer("layers/vanguard/effect-box.png");
+		
+		System.out.println(String.format("(%d, %d)[%d, %d]", textBox.getX(), textBox.getY(), textBox.getWidth(), textBox.getHeight()));
+		System.out.println(String.format("(%d, %d)[%d, %d]", textBox.getParent().getX(), textBox.getParent().getY(), textBox.getParent().getWidth(), textBox.getParent().getHeight()));
 		
 		for (ResourceElement actor : actors.values()) {
 			gfxContainer.addChild(actor);
@@ -81,7 +87,7 @@ public class GFXCore implements KeyListener {
 	}
 	
 	public void changeScene(String sceneName) {
-		gfxContainer.changeResource(sceneName);
+		gfxContainer.changeResource(sceneName, false);
 	}
 	
 	public void addActor(String actor, Integer position) {
@@ -142,8 +148,11 @@ public class GFXCore implements KeyListener {
 				this.changeActorMood("girl-chan", "actor_embarrassed");
 				this.changeScene("classroom");
 				pageCount++;
+				
+				System.out.println(String.format("(%d, %d)[%d, %d]", textBox.getX(), textBox.getY(), textBox.getWidth(), textBox.getHeight()));
+				System.out.println(String.format("(%d, %d)[%d, %d]", textBox.getParent().getX(), textBox.getParent().getY(), textBox.getParent().getWidth(), textBox.getParent().getHeight()));
+				
 			}
-			
 			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();
 			g.drawImage(gfxContainer.render(), null, 0, 0);
 			
