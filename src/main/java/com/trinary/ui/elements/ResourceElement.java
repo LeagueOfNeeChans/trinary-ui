@@ -3,8 +3,11 @@ package com.trinary.ui.elements;
 import java.awt.image.BufferedImage;
 
 import com.trinary.ui.config.ResourceStore;
+import com.trinary.ui.transitions.Transition;
 
 public class ResourceElement extends GraphicElement {
+	protected Transition transition;
+	
 	public ResourceElement() {
 		super();
 	}
@@ -60,5 +63,24 @@ public class ResourceElement extends GraphicElement {
 		}
 		
 		refreshLayer();
+	}
+
+	public Transition getTransition() {
+		return transition;
+	}
+
+	public void setTransition(Transition transition) {
+		this.transition = transition;
+	}
+	
+	@Override
+	public BufferedImage render() {
+		super.render();
+		
+		if (transition != null) {
+			transition.step(this);
+		}
+		
+		return this.surface;
 	}
 }

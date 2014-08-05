@@ -15,6 +15,7 @@ import com.trinary.ui.config.ResourceStore;
 import com.trinary.ui.elements.AnimatedElement;
 import com.trinary.ui.elements.FormattedTextElement;
 import com.trinary.ui.elements.ResourceElement;
+import com.trinary.ui.transitions.FadeOutIn;
 import com.trinary.util.Location;
 
 public class GFXCore implements KeyListener {
@@ -64,13 +65,11 @@ public class GFXCore implements KeyListener {
 		actors.put("girl-chan", gfxContainer.addChild(AnimatedElement.class));
 		actors.get("girl-chan").changeResource("actor_neutral", true);
 		actors.get("girl-chan").move(new Location("right: 100%, bottom: 100%"));
-		//actors.get("girl-chan").move(new Location("right:  800px, bottom: 600px"));
 		actors.get("girl-chan").setzIndex(1);
 		
 		textBox.setWidthP(.80);
 		textBox.setHeightP(.30);
 		textBox.move(new Location("bottom: 90%"));
-		//textBox.move(new Location("bottom: 550px"));
 		textBox.sethAlign("center");;
 		textBox.setMarginX(20);
 		textBox.setMarginY(20);
@@ -99,7 +98,7 @@ public class GFXCore implements KeyListener {
 	}
 	
 	public void changeActorMood(String actor, String mood) {
-		actors.get(actor).transitionInto(mood, "fadeInto");
+		actors.get(actor).setTransition(new FadeOutIn(mood));
 	}
 	
 	public void moveActor(String actor, int x, int y) {
