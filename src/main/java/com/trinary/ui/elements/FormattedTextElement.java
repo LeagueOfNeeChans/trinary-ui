@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -85,9 +86,11 @@ public class FormattedTextElement extends GraphicElement {
         MarkupElement lastElement;
         MarkupElement lastIcon = null;
         int iconWidth = 0;
-        int width = 0;
         int lastWidth = 0;
         int formattedTextWidth = 0;
+
+        int width  = 0;
+        int height = g.getFontMetrics().getHeight();
         
         ArrayList<MixedMediaText> lines = new ArrayList<>();
         
@@ -125,6 +128,9 @@ public class FormattedTextElement extends GraphicElement {
                 }
                 
                 line.setWidth(lastWidth);
+                line.setHeight(height);
+                line.setParent(this);
+                
                 lines.add(line);
                 
                 line = new MixedMediaText();
@@ -154,15 +160,21 @@ public class FormattedTextElement extends GraphicElement {
                     g.setFont(f);
                     g.setColor(c);
                 	
-                    formattedTextWidth = g.getFontMetrics(cf).getStringBounds(" " + lastElement.getText(), g).getBounds().width;
+                    formattedTextWidth += g.getFontMetrics(cf).getStringBounds(" " + lastElement.getText(), g).getBounds().width;
                 }
             }
         }
+        
+        line.setWidth(lastWidth);
+        line.setHeight(height);
+        line.setParent(this);
+        
         lines.add(line);
         
         return lines;
     }
     
+    // TODO Move positioning of individual words into splitAndFitMixedText
     public void renderText() {
         Graphics2D g = this.surface.createGraphics();
         g.setFont(this.defaultFont);
@@ -177,10 +189,21 @@ public class FormattedTextElement extends GraphicElement {
         int lineHeight = fm.getHeight();
         int index = 0;
         
+    	if (mmtb == null) {
+    		return;
+    	}
+        
         for (MixedMediaText mmt: mmtb.getLines()) {
             int offset = 0;
             int spaceWidth = fm.getStringBounds(" ", g).getBounds().width;
-            int textBottom = (0 + marginY + actualHeight) + (index * lineHeight);
+            int textBottom = (marginY + actualHeight) + (index * lineHeight);
+            
+            // Tracking of each element to allow for mouse listeners
+            int w = 0; 
+            //int h = actualHeight;
+            Point relative = new Point(0, 0);
+            int y = textBottom - (fm.getAscent() - fm.getDescent());
+            relative.y = y;
             
             // Debugging lines
             if (ConfigHolder.getConfig("debug") != null) {
@@ -194,21 +217,28 @@ public class FormattedTextElement extends GraphicElement {
             
             g.setColor(this.defaultFontColor);
             
+            // Set start X for this line of text
+            int startX;
+            switch (this.alignment) {
+                case "right":
+                    startX = (this.width - this.marginX - mmt.getWidth());
+                    break;
+                case "center":
+                    startX = this.marginX + (this.width - mmt.getWidth())/2;
+                    break;
+                case "left":
+                default:
+                    startX = this.marginX;
+                    break;
+            }
+            
+            // Set the relative position of this line of text
+            mmt.setRelative(new Point(startX, y));
+            
             for (MarkupElement me : mmt.getElements()) {
-                int startX;
                 
-                switch (this.alignment) {
-                    case "right":
-                        startX = (this.width - this.marginX - mmt.getWidth());
-                        break;
-                    case "center":
-                        startX = this.marginY + (this.width - mmt.getWidth())/2;
-                        break;
-                    case "left":
-                    default:
-                        startX = this.marginX;
-                        break;
-                }
+                // Set the relative x coordinate of this element
+                //relative.x = startX + offset;
                 
                 if (me instanceof TextInsert) {
                 	TextInsert ti = (TextInsert)me;
@@ -225,17 +255,29 @@ public class FormattedTextElement extends GraphicElement {
                     g.setColor(c);
                     fm = g.getFontMetrics();
                     
-                    g.drawString(me.getText(), 0 + startX + offset, textBottom);
-                    offset += fm.getStringBounds(me.getText(), g).getBounds().width + spaceWidth;
+                    // Set the width of this element
+                    w = fm.getStringBounds(me.getText(), g).getBounds().width;
+                    
+                    g.drawString(me.getText(), startX + offset, textBottom);
+                    offset += w + spaceWidth;
                 } else if (me instanceof ImageInsert) {
                     Resource r = ResourceStore.getResource(me.getText());
                     Integer larger = Math.max(r.getHeight(), actualHeight);
                     Integer diff = Math.abs(r.getHeight() - actualHeight);
                     Integer correction = (int)Math.round((double)diff/2.0);
                     Integer imageDelta = larger - correction;
-                    g.drawImage(r.getImage(), null, 0 + startX + offset, (textBottom - imageDelta));
-                    offset += r.getWidth() + spaceWidth;
+                    
+                    // Set the width of this element
+                    w = r.getWidth();
+                    
+                    g.drawImage(r.getImage(), null, startX + offset, (textBottom - imageDelta));
+                    offset += w + spaceWidth;
                 }
+/*                
+                me.setRelative(relative);
+                me.setWidth(w);
+                me.setHeight(h);
+*/
             }
             index++;
         }
@@ -279,4 +321,16 @@ public class FormattedTextElement extends GraphicElement {
     public void togglePause() {
     	this.mmtb.togglePause();
     }
+
+	@Override
+	public Point getAbsolute() {
+		Point abs = super.getAbsolute();
+		
+		abs.x += this.getMarginX();
+		abs.y += this.getMarginY();
+		
+		return abs;
+	}
+    
+    
 }

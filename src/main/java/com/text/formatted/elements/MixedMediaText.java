@@ -18,7 +18,7 @@ import com.trinary.parse.xml.XmlTextElement;
  *
  * @author mmain
  */
-public class MixedMediaText {
+public class MixedMediaText extends PositionedElement {
     protected ArrayList<MarkupElement> elements = new ArrayList<>();
     protected int iter = 0;
     protected int width = 0;

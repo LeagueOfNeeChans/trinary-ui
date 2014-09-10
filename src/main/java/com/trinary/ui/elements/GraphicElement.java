@@ -99,6 +99,17 @@ public class GraphicElement extends UIElement {
 		}
 	}
 	
+	public void setLayer(BufferedImage layer) {
+		this.bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		
+		Graphics2D g = this.bi.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		
+		g.drawImage(layer, 0, 0, width, height, null);
+	}
+	
 	public void renderChildren() {
 		Collections.sort(children);
 		for (UIElement element : children) {
@@ -129,6 +140,7 @@ public class GraphicElement extends UIElement {
 		g.drawImage(adjusted, null, 0, 0);
 		
         this.renderChildren();
+        
         return this.surface;
     }
 }

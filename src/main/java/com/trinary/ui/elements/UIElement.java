@@ -1,5 +1,6 @@
 package com.trinary.ui.elements;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -198,12 +199,42 @@ public abstract class UIElement implements Comparable<UIElement> {
 	}
 
 	public void setBrightness(float brightness) {
+		setBrightness(brightness, false);
+	}
+	
+	public void setBrightness(float brightness, boolean recursive) {
 		this.brightness = brightness;
+		
+		if (recursive) {
+			for(UIElement child : this.children) {
+				child.setBrightness(brightness, recursive);
+			}
+		}
 	}
 
 	@Override
 	public int compareTo(UIElement o) {
 		return new Integer(zIndex).compareTo(new Integer(o.zIndex));
+	}
+	
+	public Point getAbsolute() {
+		UIElement ptr = this.parent;
+		Point abs = new Point(this.getX(), this.getY());
+		
+		while (ptr != null) {
+			abs.x += ptr.getX();
+			abs.y += ptr.getY();
+			ptr = ptr.getParent();
+		}
+		
+		return abs;
+	}
+
+	public boolean rectangleContains(int x, int y) {
+		return  x > this.getAbsolute().x &&
+				y > this.getAbsolute().y &&
+				x < this.getAbsolute().x + this.width &&
+				y < this.getAbsolute().y + this.height;
 	}
 
 	public abstract BufferedImage render();

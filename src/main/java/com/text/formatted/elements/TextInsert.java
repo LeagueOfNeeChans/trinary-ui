@@ -6,6 +6,7 @@ package com.text.formatted.elements;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Stack;
 
@@ -19,8 +20,33 @@ public class TextInsert extends MarkupElement {
     protected String text;
     protected Stack<Formatting> formatStack = new Stack<Formatting>();
     
+    TextInsert(String text, Stack<Formatting> formatStack, Point origin, Point relative, int width, int height) {
+        super(origin, relative, width, height);
+    	this.text = text;
+    	
+    	if (!formatStack.isEmpty()) {
+	    	Formatting thisElement = formatStack.peek();
+	    	
+	    	if (thisElement.getAttributes().get("id") != null) {
+	    		this.mark(thisElement.getAttributes().get("id"));
+	    	}
+    	}
+        
+        for (Formatting formatting : formatStack) {
+        	this.formatStack.add(formatting);
+        }
+    }
+    
     TextInsert(String text, Stack<Formatting> formatStack) {
-        this.text = text;
+    	this.text = text;
+    	
+    	if (!formatStack.isEmpty()) {
+	    	Formatting thisElement = formatStack.peek();
+	    	
+	    	if (thisElement.getAttributes().get("id") != null) {
+	    		this.mark(thisElement.getAttributes().get("id"));
+	    	}
+    	}
         
         for (Formatting formatting : formatStack) {
         	this.formatStack.add(formatting);

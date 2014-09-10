@@ -4,6 +4,7 @@
  */
 package com.text.formatted.elements;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 /**
@@ -12,6 +13,10 @@ import java.awt.image.BufferedImage;
  */
 public class ImageInsert extends MarkupElement {
     protected String imageString;
+    
+    public ImageInsert(String imageString, Point origin, Point relative, int width, int height) {
+    	this(imageString);
+    }
     
     public ImageInsert(String imageString) {
         this.imageString = imageString;

@@ -2,7 +2,7 @@ package com.text.formatted.elements;
 
 import java.util.ArrayList;
 
-public class MixedMediaTextBlock {
+public class MixedMediaTextBlock extends PositionedElement {
 	protected ArrayList<MixedMediaText> lines = new ArrayList<MixedMediaText>();
 	protected Integer dIndex = 0;
 	protected Boolean animated = false;
@@ -15,8 +15,19 @@ public class MixedMediaTextBlock {
 	public MixedMediaTextBlock(ArrayList<MixedMediaText> lines, Boolean animated) {
 		this.animated = animated;
 		
+		MixedMediaText first = lines.get(0);
+		
+		this.parent = first.getParent();
+		this.width = 0;
+		this.height = 0;
+		
 		for (MixedMediaText line : lines) {
 			this.lines.add(line);
+			if (line.getWidth() > this.width) {
+				this.width = line.getWidth();
+			}
+			
+			this.height += line.getHeight();
 		}
 		
 		if (!this.animated) {
