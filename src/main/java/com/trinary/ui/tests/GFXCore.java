@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 import com.text.formatted.elements.PositionedElement;
 import com.trinary.ui.config.ConfigHolder;
@@ -44,6 +45,7 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		container = new JFrame("League of Nee-chans");
 		container.setPreferredSize(new Dimension(800, 600));
 		container.addKeyListener(this);
+		container.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
 		canvas = new Canvas();
 		canvas.setPreferredSize(new Dimension(container.getWidth(), container.getHeight()));
