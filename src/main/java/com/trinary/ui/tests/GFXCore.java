@@ -12,6 +12,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -25,6 +27,7 @@ import com.trinary.ui.elements.ContainerElement;
 import com.trinary.ui.elements.FormattedTextElement;
 import com.trinary.ui.transitions.FadeOutIn;
 import com.trinary.util.Location;
+import com.trinary.vn.screen.ActorPosition;
 
 public class GFXCore implements KeyListener, MouseListener, MouseMotionListener {
 	private JFrame frame;
@@ -40,12 +43,16 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	private ChoiceBox choiceBox;
 	private HashMap<String, AnimatedElement> actors = new HashMap<>();
 	
-	public GFXCore() {	
+	private HashMap<String, ActorPosition> actorPositions = new HashMap<>();
+	
+	public GFXCore() {
+		// Set up Java container
 		frame = new JFrame("League of Nee-chans");
 		frame.setPreferredSize(new Dimension(800, 600));
 		frame.addKeyListener(this);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
+		// Set up drawing surface
 		canvas = new Canvas();
 		canvas.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
 		canvas.setVisible(true);
@@ -53,23 +60,29 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
 		
+		// Add drawing surface to Java container
 		frame.setResizable(false);
 		frame.add(canvas);
 		frame.pack();
 		frame.setVisible(true);
 		
+		// Create buffer strategy
 		canvas.createBufferStrategy(2);
 		strategy = canvas.getBufferStrategy();
 		
+		// Configure UI and add resources
 		ConfigHolder.setConfig("rootDirectory", "src/main/resources/");
 		ResourceStore.addFolder("vn");
 		
+		// Create our UI container
 		container = new ContainerElement(frame);
 		
+		// Create background (scene)
 		scene = container.addChild(AnimatedElement.class);
 		scene.setWidthP(1.0);
 		scene.setHeightP(1.0);
 		
+		// Create text box
 		textBox = container.addChild(FormattedTextElement.class);
 		textBox.changeResource("vn.skin.textbox", false);
 		textBox.setWidthP(.80);
@@ -81,12 +94,14 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		textBox.setTransparency(0.75f);
 		textBox.setzIndex(1);
 		
+		// Create curtain for darkening/lightening screen
 		curtain = container.addChild(AnimatedElement.class);
 		curtain.setWidthP(1.0);
 		curtain.setHeightP(1.0);
 		curtain.setTransparency(0.0f);
 		curtain.setzIndex(3);
 		
+		// Create choice box
 		choiceBox = container.addChild(ChoiceBox.class);
 		choiceBox.changeResource("vn.skin.textbox", false);
 		choiceBox.setWidthP(0.60);
@@ -97,14 +112,32 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		choiceBox.setMarginY(40);
 		choiceBox.setTransparency(0.0f);
 		choiceBox.setzIndex(9999);
+		
+		// Set up actor positions
+		actorPositions.put("right", new ActorPosition("right: 0px, bottom: 100%", 1, 1.0));
+		actorPositions.put("left",  new ActorPosition("left:  100%, bottom: 100%", 1, 1.0));
 	}
 	
 	public void changeScene(String sceneName) {
-		scene.setTransition(new FadeOutIn(sceneName));
+		String resName = String.format("vn.scenes.%s", sceneName);
+		scene.setTransition(new FadeOutIn(resName));
 	}
 	
-	public void addActor(String actor, Integer position) {
-		actors.put(actor, container.addChild(AnimatedElement.class));
+	public void addActor(String name, String mood, Integer position) {
+		LinkedHashSet<Entry <String, ActorPosition> > positions = (LinkedHashSet<Entry<String, ActorPosition>>) actorPositions.entrySet();
+		String posString = ((Entry<String, ActorPosition>)positions.toArray()[position]).getKey();
+		addActor(name, mood, posString);
+	}
+	
+	public void addActor(String name, String mood, String position) {
+		ActorPosition pos = actorPositions.get(position);
+		AnimatedElement actor = container.addChild(AnimatedElement.class);
+		String resName = String.format("vn.actors.%s.%s", name, mood);
+		actor.changeResource(resName, true);
+		actor.move(pos.getPosition());
+		actor.setzIndex(pos.getzIndex());
+		//actor.scale(new Float(pos.getScale()));
+		actors.put(name, actor);
 	}
 	
 	public void setText(String text) {
@@ -112,7 +145,8 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	}
 	
 	public void changeActorMood(String actor, String mood) {
-		actors.get(actor).setTransition(new FadeOutIn(mood));
+		String resName = String.format("vn.actors.%s.%s", actor, mood);
+		actors.get(actor).setTransition(new FadeOutIn(resName));
 	}
 	
 	public void moveActor(String actor, int x, int y) {
@@ -147,6 +181,9 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	}
 	
 	public void mainLoop() {
+		changeScene("hallway");
+		addActor("actor", "default", "right");
+		
 		// Run the main loop
 		while (running) {
 			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();
