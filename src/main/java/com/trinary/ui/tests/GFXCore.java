@@ -199,6 +199,8 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		addActor("girlchan", "right");
 		changeActorMood("girlchan", "default");
 		
+		setText("[HELP]: Press 'a' to change actor mood and 's' to change the scene.");
+		
 		// Run the main loop
 		while (running) {
 			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();
@@ -219,6 +221,7 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		case KeyEvent.VK_ENTER:
 			System.out.println("ENTER PRESSED!");
 			this.skip();
+			break;
 		case 'a':
 			// Test code
 			System.out.println("INDEX: " + moodIndex);
@@ -243,6 +246,9 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 			changeScene(scenes[sceneIndex]);
 			changeActorMood("girlchan", "embarrassed");
 			setText(String.format("How did we just move to the <b>%s</b>?", scenes[sceneIndex]));
+			break;
+		case 'h':
+			setText("[HELP]: Press 'a' to change actor mood and 's' to change the scene.");
 			break;
 		}
 	}

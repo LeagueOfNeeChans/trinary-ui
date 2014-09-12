@@ -47,6 +47,12 @@ public class FormattedTextElement extends ResourceElement {
 		//this.renderText();
 	}
 	
+	public void appendLine(String text, Boolean animated) {
+		MixedMediaText mmt = new MixedMediaText(text);
+		MixedMediaTextBlock mmtb = new MixedMediaTextBlock(splitAndFitMixedText(mmt), animated);
+		this.mmtb.getLines().addAll(mmtb.getLines());
+	}
+	
     public int getMarginX() {
 		return marginX;
 	}
