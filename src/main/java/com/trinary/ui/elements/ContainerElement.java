@@ -3,6 +3,7 @@ package com.trinary.ui.elements;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -15,12 +16,16 @@ import javax.imageio.ImageIO;
 
 import com.trinary.ui.config.ConfigHolder;
 
-public class GraphicElement extends UIElement {
-	public GraphicElement() {
+public class ContainerElement extends UIElement {
+	public ContainerElement() {
 		super(0, 0, 0, 0);
 	}
 	
-	public GraphicElement(int x, int y, int width, int height) {
+	public ContainerElement(Container container) {
+		this(0, 0, container.getWidth(), container.getHeight());
+	}
+	
+	public ContainerElement(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = this.surface.createGraphics();
@@ -28,7 +33,7 @@ public class GraphicElement extends UIElement {
 		g.fillRect(0, 0, width, height);
 	}
 	
-	public GraphicElement(int x, int y, int width, int height, Color color) {
+	public ContainerElement(int x, int y, int width, int height, Color color) {
 		super(x, y, width, height);
 		
 		this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -42,7 +47,7 @@ public class GraphicElement extends UIElement {
         g.fillRect(0, 0, this.width, this.height);
 	}
 	
-	public GraphicElement(int x, int y, int width, int height, String filename) {
+	public ContainerElement(int x, int y, int width, int height, String filename) {
 		super(x, y, width, height);
 		try {
 			BufferedImage bi = ImageIO.read(new File(ConfigHolder.getConfig("rootDirectory") + filename));
@@ -63,7 +68,7 @@ public class GraphicElement extends UIElement {
 		}
 	}
 	
-	public GraphicElement(int x, int y, int width, int height, BufferedImage bi) {
+	public ContainerElement(int x, int y, int width, int height, BufferedImage bi) {
 		super(x, y, width, height);
 		this.bi = bi;
 	}

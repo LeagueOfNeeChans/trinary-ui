@@ -21,6 +21,7 @@ import com.trinary.ui.config.ConfigHolder;
 import com.trinary.ui.config.ResourceStore;
 import com.trinary.ui.elements.AnimatedElement;
 import com.trinary.ui.elements.ChoiceBox;
+import com.trinary.ui.elements.ContainerElement;
 import com.trinary.ui.elements.FormattedTextElement;
 import com.trinary.ui.elements.ResourceElement;
 import com.trinary.ui.transitions.FadeOutIn;
@@ -34,8 +35,8 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	
 	private BufferStrategy strategy;
 	
-	private ResourceElement curtain;
-	private ResourceElement gfxContainer;
+	private ContainerElement gfxContainer;
+	private AnimatedElement curtain, scene;
 	private FormattedTextElement textBox;
 	private ChoiceBox choiceBox;
 	private HashMap<String, AnimatedElement> actors = new HashMap<>();
@@ -64,17 +65,17 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		ConfigHolder.setConfig("rootDirectory", "src/main/resources/");
 		ResourceStore.addFolder("vn");
 		
-		gfxContainer = new ResourceElement();
-		gfxContainer.setWidth(container.getWidth());
-		gfxContainer.setHeight(container.getHeight());
+		gfxContainer = new ContainerElement(container);
 		
-		gfxContainer.setzIndex(0);
+		scene = gfxContainer.addChild(AnimatedElement.class);
+		scene.setWidthP(1.0);
+		scene.setHeightP(1.0);
 		
-		curtain = gfxContainer.addChild(ResourceElement.class);
+		curtain = gfxContainer.addChild(AnimatedElement.class);
 		curtain.setWidthP(1.0);
 		curtain.setHeightP(1.0);
-		curtain.setzIndex(3);
 		curtain.setTransparency(0.0f);
+		curtain.setzIndex(3);
 		
 		choiceBox = gfxContainer.addChild(ChoiceBox.class);
 		choiceBox.changeResource("vn.skin.textbox", false);
@@ -96,11 +97,11 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		textBox.setMarginX(20);
 		textBox.setMarginY(20);
 		textBox.setTransparency(0.75f);
-		textBox.setzIndex(2);
+		textBox.setzIndex(1);
 	}
 	
 	public void changeScene(String sceneName) {
-		gfxContainer.changeResource(sceneName, false);
+		scene.setTransition(new FadeOutIn(sceneName));
 	}
 	
 	public void addActor(String actor, Integer position) {

@@ -9,7 +9,7 @@ import com.trinary.util.Location;
 public abstract class UIElement implements Comparable<UIElement> {
 	protected Location pos = new Location();
 	protected int width, height;
-	protected int zIndex = 0;
+	protected int zIndex = -1;
 	
 	protected float brightness = 1.0f;
 	protected float transparency = 1.0f;

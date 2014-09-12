@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import com.trinary.ui.config.ResourceStore;
 import com.trinary.ui.transitions.Transition;
 
-public class ResourceElement extends GraphicElement {
+public class ResourceElement extends ContainerElement {
 	protected Transition transition;
 	
 	public ResourceElement() {
