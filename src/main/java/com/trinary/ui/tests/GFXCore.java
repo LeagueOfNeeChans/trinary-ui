@@ -23,41 +23,40 @@ import com.trinary.ui.elements.AnimatedElement;
 import com.trinary.ui.elements.ChoiceBox;
 import com.trinary.ui.elements.ContainerElement;
 import com.trinary.ui.elements.FormattedTextElement;
-import com.trinary.ui.elements.ResourceElement;
 import com.trinary.ui.transitions.FadeOutIn;
 import com.trinary.util.Location;
 
 public class GFXCore implements KeyListener, MouseListener, MouseMotionListener {
-	private JFrame container;
+	private JFrame frame;
 	private Canvas canvas;
 	private Boolean running = true;
 	private Boolean paused = false;
 	
 	private BufferStrategy strategy;
 	
-	private ContainerElement gfxContainer;
+	private ContainerElement container;
 	private AnimatedElement curtain, scene;
 	private FormattedTextElement textBox;
 	private ChoiceBox choiceBox;
 	private HashMap<String, AnimatedElement> actors = new HashMap<>();
 	
 	public GFXCore() {	
-		container = new JFrame("League of Nee-chans");
-		container.setPreferredSize(new Dimension(800, 600));
-		container.addKeyListener(this);
-		container.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		frame = new JFrame("League of Nee-chans");
+		frame.setPreferredSize(new Dimension(800, 600));
+		frame.addKeyListener(this);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
 		canvas = new Canvas();
-		canvas.setPreferredSize(new Dimension(container.getWidth(), container.getHeight()));
+		canvas.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
 		canvas.setVisible(true);
 		canvas.setFocusable(false);
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
 		
-		container.setResizable(false);
-		container.add(canvas);
-		container.pack();
-		container.setVisible(true);
+		frame.setResizable(false);
+		frame.add(canvas);
+		frame.pack();
+		frame.setVisible(true);
 		
 		canvas.createBufferStrategy(2);
 		strategy = canvas.getBufferStrategy();
@@ -65,30 +64,13 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		ConfigHolder.setConfig("rootDirectory", "src/main/resources/");
 		ResourceStore.addFolder("vn");
 		
-		gfxContainer = new ContainerElement(container);
+		container = new ContainerElement(frame);
 		
-		scene = gfxContainer.addChild(AnimatedElement.class);
+		scene = container.addChild(AnimatedElement.class);
 		scene.setWidthP(1.0);
 		scene.setHeightP(1.0);
 		
-		curtain = gfxContainer.addChild(AnimatedElement.class);
-		curtain.setWidthP(1.0);
-		curtain.setHeightP(1.0);
-		curtain.setTransparency(0.0f);
-		curtain.setzIndex(3);
-		
-		choiceBox = gfxContainer.addChild(ChoiceBox.class);
-		choiceBox.changeResource("vn.skin.textbox", false);
-		choiceBox.setWidthP(0.60);
-		choiceBox.setHeightP(0.60);
-		choiceBox.sethAlign("center");
-		choiceBox.setvAlign("center");
-		choiceBox.setMarginX(20);
-		choiceBox.setMarginY(40);
-		choiceBox.setTransparency(0.0f);
-		choiceBox.setzIndex(9999);
-		
-		textBox = gfxContainer.addChild(FormattedTextElement.class);
+		textBox = container.addChild(FormattedTextElement.class);
 		textBox.changeResource("vn.skin.textbox", false);
 		textBox.setWidthP(.80);
 		textBox.setHeightP(.30);
@@ -98,6 +80,23 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		textBox.setMarginY(20);
 		textBox.setTransparency(0.75f);
 		textBox.setzIndex(1);
+		
+		curtain = container.addChild(AnimatedElement.class);
+		curtain.setWidthP(1.0);
+		curtain.setHeightP(1.0);
+		curtain.setTransparency(0.0f);
+		curtain.setzIndex(3);
+		
+		choiceBox = container.addChild(ChoiceBox.class);
+		choiceBox.changeResource("vn.skin.textbox", false);
+		choiceBox.setWidthP(0.60);
+		choiceBox.setHeightP(0.60);
+		choiceBox.sethAlign("center");
+		choiceBox.setvAlign("center");
+		choiceBox.setMarginX(20);
+		choiceBox.setMarginY(40);
+		choiceBox.setTransparency(0.0f);
+		choiceBox.setzIndex(9999);
 	}
 	
 	public void changeScene(String sceneName) {
@@ -105,7 +104,7 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	}
 	
 	public void addActor(String actor, Integer position) {
-		actors.put(actor, gfxContainer.addChild(AnimatedElement.class));
+		actors.put(actor, container.addChild(AnimatedElement.class));
 	}
 	
 	public void setText(String text) {
@@ -151,7 +150,7 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		// Run the main loop
 		while (running) {
 			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();
-			g.drawImage(gfxContainer.render(), null, 0, 0);
+			g.drawImage(container.render(), null, 0, 0);
 			
 			strategy.show();
 			try { Thread.sleep(10); } catch (Exception e) {}
