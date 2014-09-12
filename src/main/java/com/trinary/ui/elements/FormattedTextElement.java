@@ -298,7 +298,7 @@ public class FormattedTextElement extends ResourceElement {
     
     public Boolean isDone() {
     	if (mmtb == null) {
-    		return false;
+    		return true;
     	}
     	return mmtb.getDone();
     }
@@ -312,7 +312,7 @@ public class FormattedTextElement extends ResourceElement {
     
     public Boolean isSkipped() {
     	if (mmtb == null) {
-    		return false;
+    		return true;
     	}
     	return mmtb.getSkipped();
     }

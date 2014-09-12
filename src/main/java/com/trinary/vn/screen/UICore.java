@@ -1,4 +1,4 @@
-package com.trinary.ui.tests;
+package com.trinary.vn.screen;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
@@ -22,10 +22,10 @@ import com.trinary.ui.elements.ChoiceBox;
 import com.trinary.ui.elements.ContainerElement;
 import com.trinary.ui.elements.FormattedTextElement;
 import com.trinary.ui.transitions.FadeOutIn;
+import com.trinary.util.EventCallback;
 import com.trinary.util.Location;
-import com.trinary.vn.screen.ActorPosition;
 
-public class GFXCore implements KeyListener, MouseListener, MouseMotionListener {
+public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	// Java UI Elements
 	private JFrame frame;
 	private Canvas canvas;
@@ -45,16 +45,21 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	// Actor positions
 	private HashMap<String, ActorPosition> actorPositions = new HashMap<>();
 	
+	// Callback for marked functions
+	private EventCallback callback = null;
+	
 	// Test variables
+	/*
 	private Integer moodIndex = 0;
 	private String[] moods = {"default", "annoyed", "embarrassed", "wishful"};
 	private Integer sceneIndex = 0;
 	private String[] scenes = {"hallway", "classroom"};
+	*/
 	
 	/**
 	 * Setup our Visual Novel UI
 	 */
-	public GFXCore() {
+	public UICore() {
 		// Set up Java container
 		frame = new JFrame("League of Nee-chans");
 		frame.setPreferredSize(new Dimension(800, 600));
@@ -180,8 +185,8 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	 * 
 	 * @param text
 	 */
-	public void setText(String text) {
-		textBox.setText(text, true);
+	public void setText(String actor, String text) {
+		textBox.setText(String.format("<b>%s</b>: %s", capitalize(actor), text), true);
 	}
 	
 	/**
@@ -217,6 +222,22 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	}
 	
 	/**
+	 * Add a choice to the choice box
+	 */
+	public void addChoice(String id, String text) {
+		choiceBox.addChoice(id, "<img src='vn.skin.black-icon'/>" + text);
+	}
+	
+	/**
+	 * Show the choice box
+	 */
+	public void showChoices() {
+		choiceBox.finish();
+		darken();
+		choiceBox.setTransparency(1.0f);
+	}
+	
+	/**
 	 * Skips by pulling the next UI message from the bus
 	 */
 	public void skip() {
@@ -224,11 +245,7 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 			
 			// Set the textBox to done
 			textBox.setDone();
-			
-			// Read the next UI message from the bus
-/*********************************************************************************************
-*MESSAGE BUS IN																				 *	
-/*********************************************************************************************/		
+					
 			return;
 		}
 		
@@ -248,6 +265,13 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		} else {
 			undarken();
 		}
+	}
+	
+	/**
+	 * Kill rendering loop
+	 */
+	public void stop() {
+		running = false;
 	}
 	
 	/**
@@ -274,6 +298,21 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	}
 	
 	/**
+	 * Check the status of the last command
+	 * @return
+	 */
+	public boolean isDrawing() {
+		return !textBox.isSkipped() || !textBox.isDone();
+	}
+	
+	/**
+	 * Set the callback function for mouse click events
+	 */
+	public void setCallback(EventCallback c) {
+		callback = c;
+	}
+	
+	/**
 	 * Render each frame of the game here
 	 */
 	public void mainLoop() {
@@ -281,11 +320,12 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		 * Test code
 		 * Remove from final version
 		 */
+		/*
 		changeScene("hallway");
 		addActor("girlchan", "right");
 		changeActorMood("girlchan", "default");
-		
-		setText("[HELP]: Press 'a' to change actor mood and 's' to change the scene.");
+		setText("HELP","Press 'a' to change actor mood and 's' to change the scene.");
+		*/
 		
 		// Run the main loop
 		while (running) {
@@ -321,6 +361,7 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 			System.out.println("ENTER PRESSED!");
 			this.skip();
 			break;
+		/*
 		case 'a':
 			// Test code
 			System.out.println("INDEX: " + moodIndex);
@@ -331,7 +372,7 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 				moodIndex = 0;
 			}
 			changeActorMood("girlchan", moods[moodIndex]);
-			setText(String.format("I am <b>%s</b>!", moods[moodIndex]));
+			setText("girl-chan: ", String.format("I am <b>%s</b>!", moods[moodIndex]));
 			break;
 		case 's':
 			// Test code
@@ -344,11 +385,12 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 			}
 			changeScene(scenes[sceneIndex]);
 			changeActorMood("girlchan", "embarrassed");
-			setText(String.format("How did we just move to the <b>%s</b>?", scenes[sceneIndex]));
+			setText("girl-chan: ", String.format("How did we just move to the <b>%s</b>?", scenes[sceneIndex]));
 			break;
 		case 'h':
-			setText("[HELP]: Press 'a' to change actor mood and 's' to change the scene.");
+			setText("HELP", "Press 'a' to change actor mood and 's' to change the scene.");
 			break;
+		*/
 		}
 	}
 
@@ -363,10 +405,14 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 			if (element.rectangleContains(e.getX(), e.getY())) {
 				System.out.println(String.format("\t\tCLICKED ON MONITORED ELEMENT %s!", element.getId()));
 				
+				choiceBox.setTransparency(0.0f);
+				choiceBox.clear();
+				undarken();
+				
 				// Send choice_made message with id back to SE core
-/*********************************************************************************************
-*MESSAGE BUS OUT																			 *	
-/*********************************************************************************************/
+				if (callback != null) {
+					callback.run(element.getId());
+				}
 			}
 		}
 	}
@@ -405,4 +451,8 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 
 	@Override
 	public void mouseDragged(MouseEvent e) {}
+	
+	private String capitalize(String line) {
+	  return Character.toUpperCase(line.charAt(0)) + line.substring(1);
+	}
 }

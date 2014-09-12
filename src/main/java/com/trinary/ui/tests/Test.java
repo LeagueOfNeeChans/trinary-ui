@@ -4,6 +4,8 @@
  */
 package com.trinary.ui.tests;
 
+import com.trinary.vn.screen.UICore;
+
 
 /**
  *
@@ -11,6 +13,6 @@ package com.trinary.ui.tests;
  */
 public class Test {
     public static void main(String[] args) {
-    	new GFXCore().mainLoop();
+    	new UICore().mainLoop();
     }
 }
