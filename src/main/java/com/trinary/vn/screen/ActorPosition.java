@@ -44,6 +44,4 @@ public class ActorPosition {
 	public void setScale(Double scale) {
 		this.scale = scale;
 	}
-	
-	
 }

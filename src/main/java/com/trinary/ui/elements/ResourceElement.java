@@ -11,11 +11,23 @@ public class ResourceElement extends ContainerElement {
 	public ResourceElement() {
 		super();
 		changeResource("_black", false);
+		setTransparency(0.0f);
+	}
+	
+	public ResourceElement(String resourceName) {
+		super();
+		changeResource(resourceName, false);
 	}
 	
 	public ResourceElement(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		changeResource("_black", false);
+		setTransparency(0.0f);
+	}
+	
+	public ResourceElement(int x, int y, int width, int height, String resourceName) {
+		super(x, y, width, height);
+		changeResource(resourceName, false);
 	}
 
 	public void changeResource(String name, Boolean perserveDimensions) {

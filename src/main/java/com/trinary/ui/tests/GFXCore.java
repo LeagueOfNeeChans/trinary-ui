@@ -45,6 +45,12 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	
 	private HashMap<String, ActorPosition> actorPositions = new HashMap<>();
 	
+	private Integer moodIndex = 0;
+	private String[] moods = {"default", "annoyed", "embarrassed", "wishful"};
+	
+	private Integer sceneIndex = 0;
+	private String[] scenes = {"hallway", "classroom"};
+	
 	public GFXCore() {
 		// Set up Java container
 		frame = new JFrame("League of Nee-chans");
@@ -79,6 +85,7 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		
 		// Create background (scene)
 		scene = container.addChild(AnimatedElement.class);
+		scene.changeResource("_black", false);
 		scene.setWidthP(1.0);
 		scene.setHeightP(1.0);
 		
@@ -92,14 +99,14 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		textBox.setMarginX(20);
 		textBox.setMarginY(20);
 		textBox.setTransparency(0.75f);
-		textBox.setzIndex(1);
+		textBox.setzIndex(5);
 		
 		// Create curtain for darkening/lightening screen
 		curtain = container.addChild(AnimatedElement.class);
 		curtain.setWidthP(1.0);
 		curtain.setHeightP(1.0);
 		curtain.setTransparency(0.0f);
-		curtain.setzIndex(3);
+		curtain.setzIndex(10);
 		
 		// Create choice box
 		choiceBox = container.addChild(ChoiceBox.class);
@@ -114,8 +121,8 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		choiceBox.setzIndex(9999);
 		
 		// Set up actor positions
-		actorPositions.put("right", new ActorPosition("right: 0px, bottom: 100%", 1, 1.0));
-		actorPositions.put("left",  new ActorPosition("left:  100%, bottom: 100%", 1, 1.0));
+		actorPositions.put("right", new ActorPosition("right: 100%, bottom: 100%", 1, 1.0));
+		actorPositions.put("left",  new ActorPosition("left:  0%, bottom: 100%", 1, 1.0));
 	}
 	
 	public void changeScene(String sceneName) {
@@ -123,20 +130,27 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		scene.setTransition(new FadeOutIn(resName));
 	}
 	
-	public void addActor(String name, String mood, Integer position) {
-		LinkedHashSet<Entry <String, ActorPosition> > positions = (LinkedHashSet<Entry<String, ActorPosition>>) actorPositions.entrySet();
-		String posString = ((Entry<String, ActorPosition>)positions.toArray()[position]).getKey();
-		addActor(name, mood, posString);
-	}
-	
-	public void addActor(String name, String mood, String position) {
+	public void addActor(String name, String position) {
 		ActorPosition pos = actorPositions.get(position);
+		if (pos == null) {
+			return;
+		}
+		
 		AnimatedElement actor = container.addChild(AnimatedElement.class);
-		String resName = String.format("vn.actors.%s.%s", name, mood);
-		actor.changeResource(resName, true);
 		actor.move(pos.getPosition());
 		actor.setzIndex(pos.getzIndex());
 		//actor.scale(new Float(pos.getScale()));
+		
+		actors.put(name, actor);
+	}
+	
+	public void addActor(String name, String mood, String position) {
+		addActor(name, position);
+		
+		AnimatedElement actor = container.addChild(AnimatedElement.class);
+		String resName = String.format("vn.actors.%s.%s", name, mood);
+		actor.changeResource(resName, true);
+		
 		actors.put(name, actor);
 	}
 	
@@ -182,7 +196,8 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	
 	public void mainLoop() {
 		changeScene("hallway");
-		addActor("actor", "default", "right");
+		addActor("girlchan", "right");
+		changeActorMood("girlchan", "default");
 		
 		// Run the main loop
 		while (running) {
@@ -198,11 +213,36 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 	public void keyPressed(KeyEvent e) {
 		switch(e.getKeyChar()) {
 		case KeyEvent.VK_ESCAPE:
+			System.out.println("ESCAPE PRESSED!");
 			this.pause();
 			break;
 		case KeyEvent.VK_ENTER:
-		default:
+			System.out.println("ENTER PRESSED!");
 			this.skip();
+		case 'a':
+			// Test code
+			System.out.println("INDEX: " + moodIndex);
+			System.out.println("MOOD:  " + moods[moodIndex]);
+			
+			moodIndex++;
+			if (moodIndex >= moods.length) {
+				moodIndex = 0;
+			}
+			changeActorMood("girlchan", moods[moodIndex]);
+			setText(String.format("I am <b>%s</b>!", moods[moodIndex]));
+			break;
+		case 's':
+			// Test code
+			System.out.println("INDEX: " + moodIndex);
+			System.out.println("MOOD:  " + moods[moodIndex]);
+			
+			sceneIndex++;
+			if (sceneIndex >= scenes.length) {
+				sceneIndex = 0;
+			}
+			changeScene(scenes[sceneIndex]);
+			changeActorMood("girlchan", "embarrassed");
+			setText(String.format("How did we just move to the <b>%s</b>?", scenes[sceneIndex]));
 			break;
 		}
 	}

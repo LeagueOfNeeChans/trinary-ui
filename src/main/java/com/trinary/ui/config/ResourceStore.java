@@ -6,13 +6,16 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 
+import com.trinary.parse.xml.Formatting;
 import com.trinary.ui.elements.Resource;
 
 public class ResourceStore {
 	protected static HashMap<String, Resource> resources = new HashMap<>();
 	
 	static {
-		resources.put("_black", new Resource(createBlackBufferedImage(800, 600)));
+		resources.put("_black", new Resource(createColoredBufferedImage(800, 600, Color.black)));
+		resources.put("_white", new Resource(createColoredBufferedImage(800, 600, Color.white)));
+		resources.put("_transparent", new Resource(createColoredBufferedImage(800, 600, null)));
 	}
 
 	public static void addResource(String name, String filename) {
@@ -38,16 +41,52 @@ public class ResourceStore {
 	}
 	
 	public static Resource getResource(String name) {
-		return resources.get(name);
+		Resource r = resources.get(name);
+		
+		if (r == null && name.startsWith("#")) {
+			resources.put(name, new Resource(createColoredBufferedImage(800, 600, getColor(name))));
+		}
+		
+		return r;
 	}
 	
-	public static BufferedImage createBlackBufferedImage(int width, int height) {
+	protected static BufferedImage createColoredBufferedImage(int width, int height, Color color) {
 		BufferedImage b_img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics = b_img.createGraphics();
 
-		graphics.setPaint(Color.black);
+		if (color != null) {
+			graphics.setPaint(color);
+		}
 		graphics.fillRect(0, 0, b_img.getWidth(), b_img.getHeight());
 		
 		return b_img;
 	}
+	
+	protected static Color getColor(String hexString) {
+    	Color color = null;
+    		
+		if (hexString == null) {
+			return Color.black;
+		}
+		
+		if (hexString.toCharArray()[0] == '#') {
+			hexString = hexString.substring(1);
+			
+			if (hexString.length() != 6) {
+				return null;
+			}
+		
+    		String red   = hexString.substring(0, 2);
+    		String green = hexString.substring(2, 4);
+    		String blue  = hexString.substring(4, 6);
+    		
+    		Integer r = Integer.decode("0x" + red);
+    		Integer g = Integer.decode("0x" + green);
+    		Integer b = Integer.decode("0x" + blue);
+    		
+    		color = new Color(r, g, b);
+		}
+    	
+    	return color;
+    }
 }
