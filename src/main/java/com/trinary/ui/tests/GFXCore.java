@@ -1,7 +1,6 @@
 package com.trinary.ui.tests;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -10,10 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -30,27 +26,34 @@ import com.trinary.util.Location;
 import com.trinary.vn.screen.ActorPosition;
 
 public class GFXCore implements KeyListener, MouseListener, MouseMotionListener {
+	// Java UI Elements
 	private JFrame frame;
 	private Canvas canvas;
 	private Boolean running = true;
 	private Boolean paused = false;
 	
+	// Strategy for double buffering
 	private BufferStrategy strategy;
 	
+	// Trinary UI Elements
 	private ContainerElement container;
 	private AnimatedElement curtain, scene;
 	private FormattedTextElement textBox;
 	private ChoiceBox choiceBox;
 	private HashMap<String, AnimatedElement> actors = new HashMap<>();
 	
+	// Actor positions
 	private HashMap<String, ActorPosition> actorPositions = new HashMap<>();
 	
+	// Test variables
 	private Integer moodIndex = 0;
 	private String[] moods = {"default", "annoyed", "embarrassed", "wishful"};
-	
 	private Integer sceneIndex = 0;
 	private String[] scenes = {"hallway", "classroom"};
 	
+	/**
+	 * Setup our Visual Novel UI
+	 */
 	public GFXCore() {
 		// Set up Java container
 		frame = new JFrame("League of Nee-chans");
@@ -125,11 +128,22 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		actorPositions.put("left",  new ActorPosition("left:  0%, bottom: 100%", 1, 1.0));
 	}
 	
+	/**
+	 * Change the scene to the named scene
+	 * 
+	 * @param sceneName
+	 */
 	public void changeScene(String sceneName) {
 		String resName = String.format("vn.scenes.%s", sceneName);
 		scene.setTransition(new FadeOutIn(resName));
 	}
 	
+	/**
+	 * Add a named actor in the named position
+	 * 
+	 * @param name
+	 * @param position
+	 */
 	public void addActor(String name, String position) {
 		ActorPosition pos = actorPositions.get(position);
 		if (pos == null) {
@@ -144,6 +158,13 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		actors.put(name, actor);
 	}
 	
+	/**
+	 * Add a named actor with the specified mood in the named position
+	 * 
+	 * @param name
+	 * @param mood
+	 * @param position
+	 */
 	public void addActor(String name, String mood, String position) {
 		addActor(name, position);
 		
@@ -154,27 +175,70 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		actors.put(name, actor);
 	}
 	
+	/**
+	 * Set the text in the text box
+	 * 
+	 * @param text
+	 */
 	public void setText(String text) {
 		textBox.setText(text, true);
 	}
 	
+	/**
+	 * Change the mood of the named actor
+	 * 
+	 * @param actor
+	 * @param mood
+	 */
 	public void changeActorMood(String actor, String mood) {
 		String resName = String.format("vn.actors.%s.%s", actor, mood);
 		actors.get(actor).setTransition(new FadeOutIn(resName));
 	}
 	
+	/**
+	 * Move the named actor to this x, y coordinate
+	 * 
+	 * @param actor
+	 * @param x
+	 * @param y
+	 */
 	public void moveActor(String actor, int x, int y) {
 		actors.get(actor).move(x, y);
 	}
 	
+	/**
+	 * Move the named actor to this relative location
+	 * 
+	 * @param actor
+	 * @param location
+	 */
+	public void moveActor(String actor, String location) {
+		actors.get(actor).move(new Location(location));
+	}
+	
+	/**
+	 * Skips by pulling the next UI message from the bus
+	 */
 	public void skip() {
-		if (textBox.isSkipped()) {
+		if (textBox.isSkipped()) { // If the textBox is skipped...
+			
+			// Set the textBox to done
 			textBox.setDone();
+			
+			// Read the next UI message from the bus
+/*********************************************************************************************
+*MESSAGE BUS IN																				 *	
+/*********************************************************************************************/		
 			return;
 		}
+		
+		// Set the textBox as skipped
 		textBox.setSkipped();
 	}
 	
+	/**
+	 * Pause the UI
+	 */
 	public void pause() {
 		textBox.togglePause();
 		paused = !paused;
@@ -186,15 +250,37 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		}
 	}
 	
+	/**
+	 * Pause the UI and open the menu
+	 */
+	public void openMenu() {
+		pause();
+		
+		// TODO write menu UI
+	}
+	
+	/**
+	 * Darken the screen
+	 */
 	public void darken() {
 		curtain.setTransparency(0.5f);
 	}
 	
+	/**
+	 * Undarken the screen
+	 */
 	public void undarken() {
 		curtain.setTransparency(0.0f);
 	}
 	
+	/**
+	 * Render each frame of the game here
+	 */
 	public void mainLoop() {
+		/**
+		 * Test code
+		 * Remove from final version
+		 */
 		changeScene("hallway");
 		addActor("girlchan", "right");
 		changeActorMood("girlchan", "default");
@@ -203,6 +289,16 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		
 		// Run the main loop
 		while (running) {
+			
+			if (textBox.isSkipped()) { // If the textBox is done rendering...
+				
+				// Skip to the next screen of dialog if auto play is enabled
+				if (ConfigHolder.getConfig("autoPlay") != null) {
+					// TODO attempt to put a delay here
+					skip();
+				}
+			}
+			
 			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();
 			g.drawImage(container.render(), null, 0, 0);
 			
@@ -211,6 +307,9 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		}
 	}
 
+	/**
+	 * Monitor the keyboard for activity
+	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch(e.getKeyChar()) {
@@ -253,6 +352,9 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 		}
 	}
 
+	/**
+	 * Monitor for clicks on marked elements
+	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		System.out.println("CLICKED AT: " + e.getX() + ", " + e.getY());
@@ -262,13 +364,17 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 				System.out.println(String.format("\t\tCLICKED ON MONITORED ELEMENT %s!", element.getId()));
 				
 				// Send choice_made message with id back to SE core
+/*********************************************************************************************
+*MESSAGE BUS OUT																			 *	
+/*********************************************************************************************/
 			}
 		}
 	}
 	
+	/**
+	 * Highlight marked elements when the mouse hovers over them
+	 */
 	@Override
-	// This is built in to our system.  This simply highlights marked text when a mouse runs over it.
-	// Currently it only highlights the elements in our choice box.
 	public void mouseMoved(MouseEvent e) {
 		for (PositionedElement element : PositionedElement.getMarked()) {
 			if (element.rectangleContains(e.getX(), e.getY())) {
@@ -299,14 +405,4 @@ public class GFXCore implements KeyListener, MouseListener, MouseMotionListener 
 
 	@Override
 	public void mouseDragged(MouseEvent e) {}
-	
-	public BufferedImage createBlackBufferedImage(int width, int height) {
-		BufferedImage b_img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D graphics = b_img.createGraphics();
-
-		graphics.setPaint(Color.black);
-		graphics.fillRect(0, 0, b_img.getWidth(), b_img.getHeight());
-		
-		return b_img;
-	}
 }
