@@ -17,7 +17,7 @@ import com.trinary.ui.config.ConfigHolder;
 
 public class GraphicElement extends UIElement {
 	public GraphicElement() {
-		super(0, 0, 1, 1);
+		super(0, 0, 0, 0);
 	}
 	
 	public GraphicElement(int x, int y, int width, int height) {
@@ -108,6 +108,52 @@ public class GraphicElement extends UIElement {
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 		
 		g.drawImage(layer, 0, 0, width, height, null);
+	}
+	
+	@Override
+	public void setWidth(int width) {
+		setWidth(width, false);
+	}
+	
+	@Override
+	public void setHeight(int height) {
+		setHeight(height, false);
+	}
+	
+	public void setWidth(int width, boolean porportional) {
+		this.width = width;
+		
+		if (porportional) {
+			this.height = (int) (this.width / getRatio());
+		}
+		
+		refreshLayer();
+	}
+	
+	public void setHeight(int height, boolean porportional) {
+		this.height = height;
+		
+		if (porportional) {
+			this.width = (int) (getRatio() * this.height);
+		}
+		
+		refreshLayer();
+	}
+	
+	@Override
+	public void setWidthP(double p) {
+		super.setWidthP(p);
+		refreshLayer();
+	}
+	
+	@Override
+	public void setHeightP(double p) {
+		super.setHeightP(p);
+		refreshLayer();
+	}
+	
+	public double getRatio() {
+		return this.bi.getWidth() / this.bi.getHeight();
 	}
 	
 	public void renderChildren() {

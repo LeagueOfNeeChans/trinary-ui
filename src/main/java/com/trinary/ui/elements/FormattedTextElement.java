@@ -17,7 +17,7 @@ import com.text.formatted.elements.TextInsert;
 import com.trinary.ui.config.ConfigHolder;
 import com.trinary.ui.config.ResourceStore;
 
-public class FormattedTextElement extends GraphicElement {
+public class FormattedTextElement extends ResourceElement {
 	protected MixedMediaTextBlock mmtb;
 	protected Font defaultFont = new Font("optima", Font.PLAIN, 16);
 	protected Color defaultFontColor = Color.black;
@@ -291,34 +291,58 @@ public class FormattedTextElement extends GraphicElement {
     }
     
     public Boolean isDone() {
+    	if (mmtb == null) {
+    		return false;
+    	}
     	return mmtb.getDone();
     }
     
     public void setDone() {
+    	if (mmtb == null) {
+    		return;
+    	}
     	mmtb.setDone();
     }
     
     public Boolean isSkipped() {
+    	if (mmtb == null) {
+    		return false;
+    	}
     	return mmtb.getSkipped();
     }
     
     public void setSkipped() {
+    	if (mmtb == null) {
+    		return;
+    	}
     	mmtb.setSkipped();
     }
     
     public Boolean isPaused() {
+    	if (mmtb == null) {
+    		return false;
+    	}
     	return mmtb.getPaused();
     }
     
     public void pause() {
+    	if (mmtb == null) {
+    		return;
+    	}
     	this.mmtb.pause();
     }
     
     public void unpause() {
+    	if (mmtb == null) {
+    		return;
+    	}
     	this.mmtb.unpause();
     }
     
     public void togglePause() {
+    	if (mmtb == null) {
+    		return;
+    	}
     	this.mmtb.togglePause();
     }
 
@@ -330,7 +354,5 @@ public class FormattedTextElement extends GraphicElement {
 		abs.y += this.getMarginY();
 		
 		return abs;
-	}
-    
-    
+	} 
 }

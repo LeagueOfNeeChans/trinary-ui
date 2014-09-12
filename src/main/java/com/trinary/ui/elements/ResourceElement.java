@@ -10,27 +10,32 @@ public class ResourceElement extends GraphicElement {
 	
 	public ResourceElement() {
 		super();
+		changeResource("_black", false);
 	}
 	
+	public ResourceElement(int x, int y, int width, int height) {
+		super(x, y, width, height);
+		changeResource("_black", false);
+	}
+
 	public void changeResource(String name, Boolean perserveDimensions) {
 		Resource r = ResourceStore.getResource(name);
 		
+		System.out.println("CHANGING RESOURCE TO " + name);
+		
 		if (r == null) {
+			System.out.println("CAN'T FIND RESOURCE WITH NAME " + name);
 			return;
 		}
 		
 		this.bi = r.getImage();
 		
-		if (perserveDimensions) {
+		if (perserveDimensions || this.width == 0 || this.height == 0) {
 			this.width = r.getWidth();
 			this.height = r.getHeight();
 		}
 		
-		this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-	}
-	
-	public double getRatio() {
-		return this.bi.getWidth() / this.bi.getHeight();
+		refreshLayer();
 	}
 	
 	public void scale(float percent) {
@@ -42,26 +47,6 @@ public class ResourceElement extends GraphicElement {
 	public void resize(int width, int height) {
 		this.width = width;
 		this.height = height;
-		refreshLayer();
-	}
-	
-	public void setWidth(int width, boolean porportional) {
-		this.width = width;
-		
-		if (porportional) {
-			this.height = (int) (this.width / getRatio());
-		}
-		
-		refreshLayer();
-	}
-	
-	public void setHeight(int height, boolean porportional) {
-		this.height = height;
-		
-		if (porportional) {
-			this.width = (int) (getRatio() * this.height);
-		}
-		
 		refreshLayer();
 	}
 

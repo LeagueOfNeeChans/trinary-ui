@@ -37,6 +37,12 @@ public class Resource {
         }
     }
     
+    public Resource(BufferedImage bi) {
+    	this.resourcePath = "RESERVED";
+    	this.resourceName = "RESERVED";
+        this.resourceImage = bi;
+    }
+    
     public BufferedImage getImage() {
         return resourceImage;
     }
