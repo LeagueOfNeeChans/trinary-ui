@@ -92,7 +92,6 @@ public class FormattedTextElement extends ResourceElement {
         MarkupElement lastElement;
         MarkupElement lastIcon = null;
         int iconWidth = 0;
-        int lastWidth = 0;
         int formattedTextWidth = 0;
 
         int width  = 0;
@@ -122,8 +121,6 @@ public class FormattedTextElement extends ResourceElement {
             }
             
             line.addElement(element);
-            
-            lastWidth = width;
             width = iconWidth + formattedTextWidth;
             
             if (width >= maxWidth) {
@@ -133,7 +130,7 @@ public class FormattedTextElement extends ResourceElement {
                     lastIcon = line.popElement();
                 }
                 
-                line.setWidth(lastWidth);
+                line.setWidth(this.width);
                 line.setHeight(height);
                 line.setParent(this);
                 
@@ -171,7 +168,7 @@ public class FormattedTextElement extends ResourceElement {
             }
         }
         
-        line.setWidth(lastWidth);
+        line.setWidth(this.width);
         line.setHeight(height);
         line.setParent(this);
         

@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.util.HashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -21,6 +22,7 @@ import com.trinary.ui.elements.AnimatedElement;
 import com.trinary.ui.elements.ChoiceBox;
 import com.trinary.ui.elements.ContainerElement;
 import com.trinary.ui.elements.FormattedTextElement;
+import com.trinary.ui.elements.UIElement;
 import com.trinary.ui.transitions.FadeOutIn;
 import com.trinary.util.EventCallback;
 import com.trinary.util.Location;
@@ -85,7 +87,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 		strategy = canvas.getBufferStrategy();
 		
 		// Configure UI and add resources
-		ConfigHolder.setConfig("rootDirectory", "src/main/resources/");
+		ConfigHolder.setConfig("rootDirectory", "resources/");
 		ResourceStore.addFolder("vn");
 		
 		// Create our UI container
@@ -128,6 +130,12 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 		choiceBox.setTransparency(0.0f);
 		choiceBox.setzIndex(9999);
 		
+		container.sortChildrenByZIndex();
+		
+		for (UIElement e : container.getChildren()) {
+			System.out.println("Z-INDEX: " + e.getzIndex());
+		}
+		
 		// Set up actor positions
 		actorPositions.put("right", new ActorPosition("right: 100%, bottom: 100%", 1, 1.0));
 		actorPositions.put("left",  new ActorPosition("left:  0%, bottom: 100%", 1, 1.0));
@@ -155,7 +163,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 			return;
 		}
 		
-		AnimatedElement actor = container.addChild(AnimatedElement.class);
+		AnimatedElement actor = scene.addChild(AnimatedElement.class);
 		actor.move(pos.getPosition());
 		actor.setzIndex(pos.getzIndex());
 		//actor.scale(new Float(pos.getScale()));
@@ -302,7 +310,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 * @return
 	 */
 	public boolean isDrawing() {
-		return !textBox.isSkipped() || !textBox.isDone();
+		return !textBox.isDone();
 	}
 	
 	/**
@@ -401,17 +409,21 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	public void mouseClicked(MouseEvent e) {
 		System.out.println("CLICKED AT: " + e.getX() + ", " + e.getY());
 		
-		for (PositionedElement element : PositionedElement.getMarked()) {
-			if (element.rectangleContains(e.getX(), e.getY())) {
-				System.out.println(String.format("\t\tCLICKED ON MONITORED ELEMENT %s!", element.getId()));
-				
-				choiceBox.setTransparency(0.0f);
-				choiceBox.clear();
-				undarken();
-				
-				// Send choice_made message with id back to SE core
-				if (callback != null) {
-					callback.run(element.getId());
+		CopyOnWriteArrayList<PositionedElement> marked = PositionedElement.getMarked();
+		
+		synchronized(marked) {
+			for (PositionedElement element : marked) {
+				if (element.rectangleContains(e.getX(), e.getY())) {
+					System.out.println(String.format("\t\tCLICKED ON MONITORED ELEMENT %s!", element.getId()));
+					
+					choiceBox.setTransparency(0.0f);
+					choiceBox.clear();
+					undarken();
+					
+					// Send choice_made message with id back to SE core
+					if (callback != null) {
+						callback.run(element.getId());
+					}
 				}
 			}
 		}
@@ -422,9 +434,10 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 */
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		for (PositionedElement element : PositionedElement.getMarked()) {
-			if (element.rectangleContains(e.getX(), e.getY())) {
-				synchronized(choiceBox) {
+		CopyOnWriteArrayList<PositionedElement> marked = PositionedElement.getMarked();
+		synchronized(marked) {
+			for (PositionedElement element : marked) {
+				if (element.rectangleContains(e.getX(), e.getY())) {
 					choiceBox.highlight(element.getId());
 				}
 			}

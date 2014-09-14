@@ -60,7 +60,7 @@ public class TextInsert extends MarkupElement {
     		String hexString = formatting.getAttributes().get("color");
     		
     		if (hexString == null) {
-    			return null;
+    			continue;
     		}
     		
     		
@@ -68,7 +68,7 @@ public class TextInsert extends MarkupElement {
     			hexString = hexString.substring(1);
     			
     			if (hexString.length() != 6) {
-    				return null;
+    				continue;
     			}
     		
 	    		String red   = hexString.substring(0, 2);

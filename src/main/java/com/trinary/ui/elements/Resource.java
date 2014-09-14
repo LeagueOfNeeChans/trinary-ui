@@ -7,10 +7,12 @@ package com.trinary.ui.elements;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trinary.ui.config.ConfigHolder;
+import com.trinary.ui.config.ResourceStore;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 
@@ -30,7 +32,9 @@ public class Resource {
         this.resourceName = resourceName;
         String filePath = ConfigHolder.getConfig("rootDirectory") + resourcePath;
         try {
-            this.resourceImage = ImageIO.read(new File(filePath));
+        	File f = new File(filePath);
+    		
+            this.resourceImage = ImageIO.read(f);
             System.out.println("Successfully opened: " + filePath);
         } catch (IOException ex) {
             System.out.println("Failed to open:      " + filePath);

@@ -12,6 +12,7 @@ import com.text.formatted.elements.ImageInsert;
 import com.text.formatted.elements.MarkupElement;
 import com.text.formatted.elements.MixedMediaText;
 import com.text.formatted.elements.MixedMediaTextBlock;
+import com.text.formatted.elements.PositionedElement;
 import com.text.formatted.elements.TextInsert;
 import com.trinary.parse.xml.Formatting;
 import com.trinary.parse.xml.FormattingType;
@@ -85,7 +86,11 @@ public class ChoiceBox extends FormattedTextElement {
 	}
 	
 	public void clear() {
+		for (Choice o : choices) {
+			PositionedElement.getMarked().remove(o.getMmtb());
+		}
 		choices = new ArrayList<Choice>();
+		lastHighlighted = null;
 	}
 	
 	public void highlight(String id) {

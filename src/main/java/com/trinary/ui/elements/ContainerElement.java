@@ -162,19 +162,20 @@ public class ContainerElement extends UIElement {
 	}
 	
 	public void renderChildren() {
-		Collections.sort(children);
-		for (UIElement element : children) {
-			BufferedImage ebi = element.render();
-			
-			Graphics2D g = surface.createGraphics();
-	        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-	        g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-	        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-	        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-	        
-	        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, new Float(element.transparency));
-	        g.setComposite(comp);
-	        g.drawImage(ebi, null, element.getX(), element.getY());
+		synchronized(children) {
+			for (UIElement element : children) {
+				BufferedImage ebi = element.render();
+				
+				Graphics2D g = surface.createGraphics();
+		        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+		        g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+		        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		        
+		        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, new Float(element.transparency));
+		        g.setComposite(comp);
+		        g.drawImage(ebi, null, element.getX(), element.getY());
+			}
 		}
 	}
 	

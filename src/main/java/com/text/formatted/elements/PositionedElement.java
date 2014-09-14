@@ -1,13 +1,13 @@
 package com.text.formatted.elements;
 
 import java.awt.Point;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.trinary.ui.elements.ChildElement;
 import com.trinary.ui.elements.UIElement;
 
 public class PositionedElement implements ChildElement {
-	protected static ArrayList<PositionedElement> marked = new ArrayList<>();
+	protected static CopyOnWriteArrayList<PositionedElement> marked = new CopyOnWriteArrayList<>();
 	protected Point relative;
 	protected int width, height;
 	
@@ -28,7 +28,7 @@ public class PositionedElement implements ChildElement {
 		this.height = height;
 	}
 	
-	public static ArrayList<PositionedElement> getMarked() {
+	public static CopyOnWriteArrayList<PositionedElement> getMarked() {
 		return marked;
 	}
 
@@ -73,6 +73,8 @@ public class PositionedElement implements ChildElement {
 	}
 	
 	public void mark(String name) {
+		System.out.println("MARKED " + this);
+		
 		this.id = name;
 		marked.add(this);
 	}
@@ -94,28 +96,7 @@ public class PositionedElement implements ChildElement {
 		return abs;
 	}
 	
-	public boolean rectangleContains(int x, int y) {
-		/*
-		System.out.println("ID: " + id);
-		
-		System.out.println(String.format("X: %d <= %d <= %d? %s", 
-				this.getAbsolute().x, 
-				x, 
-				this.getAbsolute().x + this.width,
-				x > this.getAbsolute().x && x < this.getAbsolute().x + this.width));
-		System.out.println(String.format("Y: %d <= %d <= %d? %s", 
-				this.getAbsolute().y, 
-				y, 
-				this.getAbsolute().y + this.height,
-				y >= this.getAbsolute().y && y <= this.getAbsolute().y + this.height));
-		
-		System.out.println(String.format("CONTAINS? %s", 
-				(x >= this.getAbsolute().x &&
-				y >= this.getAbsolute().y) &&
-				(x <= this.getAbsolute().x + this.width &&
-				y <= this.getAbsolute().y + this.height)));
-		*/
-		
+	public boolean rectangleContains(int x, int y) {		
 		return  x >= this.getAbsolute().x &&
 				y >= this.getAbsolute().y &&
 				x <= this.getAbsolute().x + this.width &&

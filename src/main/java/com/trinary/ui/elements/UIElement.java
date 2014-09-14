@@ -3,6 +3,7 @@ package com.trinary.ui.elements;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.trinary.util.Location;
 
@@ -13,6 +14,7 @@ public abstract class UIElement implements Comparable<UIElement> {
 	
 	protected float brightness = 1.0f;
 	protected float transparency = 1.0f;
+	protected float lastTransparency = 1.0f;
 	protected String hAlign = "none";
 	protected String vAlign = "none";
 	
@@ -42,6 +44,11 @@ public abstract class UIElement implements Comparable<UIElement> {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public void addChild(UIElement child) {
+		child.parent = this;
+		this.children.add(child);
 	}
 	
 	public void setWidthP(double p) {
@@ -168,11 +175,6 @@ public abstract class UIElement implements Comparable<UIElement> {
 	public ArrayList<UIElement> getChildren() {
 		return children;
 	}
-
-	public void addChild(UIElement child) {
-		child.parent = this;
-		this.children.add(child);
-	}
 	
 	public BufferedImage getLayer() {
 		return bi;
@@ -184,6 +186,15 @@ public abstract class UIElement implements Comparable<UIElement> {
 
 	public void setTransparency(float transparency) {
 		this.transparency = transparency;
+	}
+	
+	public void hide() {
+		this.lastTransparency = this.transparency;
+		this.transparency = 0.0f;
+	}
+	
+	public void show() {
+		this.transparency = this.lastTransparency;
 	}
 	
 	public int getzIndex() {
@@ -209,6 +220,13 @@ public abstract class UIElement implements Comparable<UIElement> {
 			for(UIElement child : this.children) {
 				child.setBrightness(brightness, recursive);
 			}
+		}
+	}
+	
+	public void sortChildrenByZIndex() {
+		Collections.sort(children);
+		for (UIElement element : children) {
+			element.sortChildrenByZIndex();
 		}
 	}
 
