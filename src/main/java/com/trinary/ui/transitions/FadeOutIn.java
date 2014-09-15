@@ -4,13 +4,13 @@ import com.trinary.ui.elements.ResourceElement;
 
 public class FadeOutIn extends Transition {
 
-	public FadeOutIn(String to) {
-		super(to);
+	public FadeOutIn(String to, Boolean perserveDimensions) {
+		super(to, perserveDimensions);
 		// TODO Auto-generated constructor stub
 	}
 	
-	public FadeOutIn(String to, Double speed) {
-		super(to, speed);
+	public FadeOutIn(String to, Boolean perserveDimensions, Double speed) {
+		super(to, perserveDimensions, speed);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class FadeOutIn extends Transition {
 	protected void fadingOut(ResourceElement e) {
 		if (e.getTransparency() == 0.0f) {
 			state = "fadingIn";
-			e.changeResource(to, true);
+			e.changeResource(to, perserveDimensions);
 		} else {
 			if (e.getTransparency() - 0.1f < 0) {
 				e.setTransparency(0.0f);

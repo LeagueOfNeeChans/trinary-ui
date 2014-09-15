@@ -111,7 +111,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 */
 	public void changeScene(String sceneName) {
 		String resName = String.format("vn.scenes.%s", sceneName);
-		scene.setTransition(new FadeOutIn(resName));
+		scene.setTransition(new FadeOutIn(resName, false));
 	}
 	
 	/**
@@ -168,7 +168,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 */
 	public void changeActorMood(String actor, String mood) {
 		String resName = String.format("vn.actors.%s.%s", actor, mood);
-		actors.get(actor).setTransition(new FadeOutIn(resName));
+		actors.get(actor).setTransition(new FadeOutIn(resName, true));
 	}
 	
 	/**
