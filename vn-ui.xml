@@ -17,8 +17,7 @@
     			<width>100%</width>
     			<height>100%</height>
     		</dimensions>
-    		<resource>vn.scenes.classroom</resource>
-    		<zIndex>1</zIndex>
+    		<zIndex>0</zIndex>
     	</layout>
         <layout id="textBox">
             <type>com.trinary.ui.elements.FormattedTextElement</type>
@@ -37,10 +36,20 @@
             	<x>center</x>
             </alignment>
             <resource>vn.skin.textbox</resource>
-            <zIndex>2</zIndex>
+            <zIndex>5</zIndex>
 			<transparency>75%</transparency>
         </layout>
-        <layout id="choiceModal">
+        <layout id="curtain">
+        	<type>com.trinary.ui.element.ResourceElement</type>
+        	<dimensions>
+        		<width>100%</width>
+        		<height>100%</height>
+        	</dimensions>
+        	<resource>_black</resource>
+        	<zIndex>10</zIndex>
+        	<transparency>0%</transparency>
+        </layout>
+        <layout id="choiceBox">
             <type>com.trinary.ui.elements.ChoiceBox</type>
             <location>
                 <top>0px</top>

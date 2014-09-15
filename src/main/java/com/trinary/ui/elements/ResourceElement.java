@@ -10,8 +10,7 @@ public class ResourceElement extends ContainerElement {
 	
 	public ResourceElement() {
 		super();
-		changeResource("_black", false);
-		setTransparency(0.0f);
+		changeResource("_transparent", false);
 	}
 	
 	public ResourceElement(String resourceName) {
@@ -21,8 +20,7 @@ public class ResourceElement extends ContainerElement {
 	
 	public ResourceElement(int x, int y, int width, int height) {
 		super(x, y, width, height);
-		changeResource("_black", false);
-		setTransparency(0.0f);
+		changeResource("_transparent", false);
 	}
 	
 	public ResourceElement(int x, int y, int width, int height, String resourceName) {
@@ -32,11 +30,7 @@ public class ResourceElement extends ContainerElement {
 
 	public void changeResource(String name, Boolean perserveDimensions) {
 		Resource r = ResourceStore.getResource(name);
-		
-		System.out.println("START CHANGING RESOURCE TO " + name);
-		
 		if (r == null) {
-			//System.out.println("CAN'T FIND RESOURCE WITH NAME " + name);
 			return;
 		}
 		
@@ -48,7 +42,6 @@ public class ResourceElement extends ContainerElement {
 		}
 		
 		refreshLayer();
-		System.out.println("DONE CHANGING RESOURCE TO " + name);
 	}
 	
 	public void scale(float percent) {

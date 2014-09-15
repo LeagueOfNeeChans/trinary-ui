@@ -61,6 +61,8 @@ public class LayoutLoader {
 		if (ce == null) {
 			return null;
 		}
+		
+		ce.setId(layout.getId());
 			
 		// Set resource
 		if (layout.getResource() != null && ResourceElement.class.isAssignableFrom(ce.getClass())) {

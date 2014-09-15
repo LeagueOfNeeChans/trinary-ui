@@ -10,12 +10,19 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
 import com.trinary.ui.config.ConfigHolder;
 
 public class ContainerElement extends UIElement {
+	protected static HashMap<String, ContainerElement> childElements = new HashMap<String, ContainerElement>();
+	
+	public static ContainerElement getElementByName(String name) {
+		return ContainerElement.childElements.get(name);
+	}
+	
 	public ContainerElement() {
 		this(0, 0, 0, 0);
 	}
@@ -77,12 +84,7 @@ public class ContainerElement extends UIElement {
 	public void refreshLayer() {
 		BufferedImage bi = this.bi;
 		
-		System.out.println("REFRESH LAYER");
-		System.out.println(width + "X" + height);
-		
-		if (width != 0 && height != 0) {
-			System.out.println("REFRESHING LAYER");
-			
+		if (width != 0 && height != 0) {			
 			this.bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			
@@ -203,4 +205,16 @@ public class ContainerElement extends UIElement {
         
         return this.surface;
     }
+	
+	public void setId(String id) {
+		System.out.println("IN SET ID!");
+		
+		if (this.id != null) {
+			childElements.remove(id);
+			System.out.println("REMOVING " + id);
+		}
+		
+		this.id = id;
+		childElements.put(id, this);
+	}
 }

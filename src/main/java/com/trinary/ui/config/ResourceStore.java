@@ -1,5 +1,6 @@
 package com.trinary.ui.config;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -57,6 +58,9 @@ public class ResourceStore {
 
 		if (color != null) {
 			graphics.setPaint(color);
+		} else {
+			graphics.setComposite(AlphaComposite.Clear);
+			graphics.fillRect(0, 0, b_img.getWidth(), b_img.getHeight());
 		}
 		graphics.fillRect(0, 0, b_img.getWidth(), b_img.getHeight());
 		

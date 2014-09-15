@@ -23,7 +23,7 @@ import com.trinary.ui.elements.AnimatedElement;
 import com.trinary.ui.elements.ChoiceBox;
 import com.trinary.ui.elements.ContainerElement;
 import com.trinary.ui.elements.FormattedTextElement;
-import com.trinary.ui.elements.UIElement;
+import com.trinary.ui.elements.ResourceElement;
 import com.trinary.ui.transitions.FadeOutIn;
 import com.trinary.util.EventCallback;
 import com.trinary.util.LayoutLoader;
@@ -41,7 +41,8 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	
 	// Trinary UI Elements
 	private ContainerElement container;
-	private AnimatedElement curtain, scene;
+	private ResourceElement curtain;
+	private AnimatedElement scene;
 	private FormattedTextElement textBox;
 	private ChoiceBox choiceBox;
 	private HashMap<String, AnimatedElement> actors = new HashMap<>();
@@ -51,14 +52,6 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	
 	// Callback for marked functions
 	private EventCallback callback = null;
-	
-	// Test variables
-	/*
-	private Integer moodIndex = 0;
-	private String[] moods = {"default", "annoyed", "embarrassed", "wishful"};
-	private Integer sceneIndex = 0;
-	private String[] scenes = {"hallway", "classroom"};
-	*/
 	
 	/**
 	 * Setup our Visual Novel UI
@@ -93,58 +86,18 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 		ConfigHolder.setConfig("rootDirectory", "resources/");
 		ResourceStore.addFolder("vn");
 		
-		// Create our UI container
-		container = new ContainerElement(frame);
-		container.setzIndex(-1);
-		
-		/*
 		try {
 			container = LayoutLoader.processLayout("vn-ui.xml");
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
-		
-		// Create background (scene)
-		scene = container.addChild(AnimatedElement.class);
-		scene.changeResource("vn.scenes.classroom", false);
-		scene.setWidthP(1.0);
-		scene.setHeightP(1.0);
-		scene.setzIndex(0);
-		
-		// Create text box
-		textBox = container.addChild(FormattedTextElement.class);
-		textBox.changeResource("vn.skin.textbox", false);
-		textBox.setWidthP(.80);
-		textBox.setHeightP(.30);
-		textBox.move(new Location("bottom: 90%"));
-		textBox.sethAlign("center");
-		textBox.setMarginX(20);
-		textBox.setMarginY(20);
-		textBox.setTransparency(0.75f);
-		textBox.setzIndex(5);
-		
-		// Create curtain for darkening/lightening screen
-		curtain = container.addChild(AnimatedElement.class);
-		curtain.setWidthP(1.0);
-		curtain.setHeightP(1.0);
-		curtain.setTransparency(0.0f);
-		curtain.setzIndex(10);
-		
-		// Create choice box
-		choiceBox = container.addChild(ChoiceBox.class);
-		choiceBox.changeResource("vn.skin.textbox", false);
-		choiceBox.setWidthP(0.60);
-		choiceBox.setHeightP(0.60);
-		choiceBox.sethAlign("center");
-		choiceBox.setvAlign("center");
-		choiceBox.setMarginX(20);
-		choiceBox.setMarginY(40);
-		choiceBox.setTransparency(0.0f);
-		choiceBox.setzIndex(9999);
 		
 		container.sortChildrenByZIndex();
+		
+		scene     = (AnimatedElement)ContainerElement.getElementByName("scene");
+		curtain   = (ResourceElement)ContainerElement.getElementByName("curtain");
+		textBox   = (FormattedTextElement)ContainerElement.getElementByName("textBox");
+		choiceBox = (ChoiceBox)ContainerElement.getElementByName("choiceBox");
 		
 		// Set up actor positions
 		actorPositions.put("right", new ActorPosition("right: 100%, bottom: 100%", 1, 1.0));
@@ -243,6 +196,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 * Add a choice to the choice box
 	 */
 	public void addChoice(String id, String text) {
+		System.out.println("CHOICEBOX IS: " + choiceBox);
 		choiceBox.addChoice(id, "<img src='vn.skin.black-icon'/>" + text);
 	}
 	

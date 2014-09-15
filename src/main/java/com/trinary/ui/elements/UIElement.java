@@ -4,10 +4,13 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import com.trinary.util.Location;
 
 public abstract class UIElement implements Comparable<UIElement> {
+	protected String id;
+	
 	protected Location pos = new Location();
 	protected int width, height;
 	protected int zIndex = -1;
@@ -223,7 +226,7 @@ public abstract class UIElement implements Comparable<UIElement> {
 			}
 		}
 	}
-	
+
 	public void sortChildrenByZIndex() {
 		Collections.sort(children);
 		for (UIElement element : children) {
