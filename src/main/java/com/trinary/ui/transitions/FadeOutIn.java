@@ -1,6 +1,6 @@
 package com.trinary.ui.transitions;
 
-import com.trinary.ui.elements.ResourceElement;
+import com.trinary.ui.elements.AnimatedElement;
 
 public class FadeOutIn extends Transition {
 
@@ -14,7 +14,7 @@ public class FadeOutIn extends Transition {
 	}
 
 	@Override
-	public void step(ResourceElement e) {
+	public void step(AnimatedElement e) {
 		if (state == "idle") {
 			state = "fadingOut";
 		}
@@ -29,9 +29,9 @@ public class FadeOutIn extends Transition {
 		}
 	}
 
-	protected void fadingIn(ResourceElement e) {
+	protected void fadingIn(AnimatedElement e) {
 		if (e.getTransparency() == 1.0f) {
-			state = "idle";
+			state = "done";
 			e.setTransition(null);
 		} else {
 			if (e.getTransparency() + 0.1f > 1) {
@@ -42,7 +42,7 @@ public class FadeOutIn extends Transition {
 		}
 	}
 	
-	protected void fadingOut(ResourceElement e) {
+	protected void fadingOut(AnimatedElement e) {
 		if (e.getTransparency() == 0.0f) {
 			state = "fadingIn";
 			e.changeResource(to, perserveDimensions);

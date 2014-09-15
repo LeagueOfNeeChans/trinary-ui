@@ -1,13 +1,8 @@
 package com.trinary.ui.elements;
 
-import java.awt.image.BufferedImage;
-
 import com.trinary.ui.config.ResourceStore;
-import com.trinary.ui.transitions.Transition;
 
 public class ResourceElement extends ContainerElement {
-	protected Transition transition;
-	
 	public ResourceElement() {
 		super();
 		changeResource("_transparent", false);
@@ -54,24 +49,5 @@ public class ResourceElement extends ContainerElement {
 		this.width = width;
 		this.height = height;
 		refreshLayer();
-	}
-
-	public Transition getTransition() {
-		return transition;
-	}
-
-	public void setTransition(Transition transition) {
-		this.transition = transition;
-	}
-	
-	@Override
-	public BufferedImage render() {
-		super.render();
-		
-		if (transition != null) {
-			transition.step(this);
-		}
-		
-		return this.surface;
 	}
 }

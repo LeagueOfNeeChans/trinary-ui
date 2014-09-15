@@ -23,12 +23,14 @@ import com.trinary.ui.elements.AnimatedElement;
 import com.trinary.ui.elements.ChoiceBox;
 import com.trinary.ui.elements.ContainerElement;
 import com.trinary.ui.elements.FormattedTextElement;
+import com.trinary.ui.elements.Monitorable;
 import com.trinary.ui.elements.ResourceElement;
 import com.trinary.ui.transitions.FadeOutIn;
 import com.trinary.util.EventCallback;
 import com.trinary.util.LayoutLoader;
 import com.trinary.util.Location;
 
+@SuppressWarnings("restriction")
 public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	// Java UI Elements
 	private JFrame frame;
@@ -50,13 +52,15 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	// Actor positions
 	private HashMap<String, ActorPosition> actorPositions = new HashMap<>();
 	
+	// Last monitorable
+	private Monitorable lastMonitorable;
+	
 	// Callback for marked functions
 	private EventCallback callback = null;
 	
 	/**
 	 * Setup our Visual Novel UI
 	 */
-	@SuppressWarnings("restriction")
 	public UICore() {
 		// Set up Java container
 		frame = new JFrame("League of Nee-chans");
@@ -112,6 +116,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	public void changeScene(String sceneName) {
 		String resName = String.format("vn.scenes.%s", sceneName);
 		scene.setTransition(new FadeOutIn(resName, false));
+		lastMonitorable = scene;
 	}
 	
 	/**
@@ -158,6 +163,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 */
 	public void setText(String actor, String text) {
 		textBox.setText(String.format("<b>%s</b>: %s", capitalize(actor), text), true);
+		lastMonitorable = textBox;
 	}
 	
 	/**
@@ -168,7 +174,9 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 */
 	public void changeActorMood(String actor, String mood) {
 		String resName = String.format("vn.actors.%s.%s", actor, mood);
-		actors.get(actor).setTransition(new FadeOutIn(resName, true));
+		AnimatedElement e = actors.get(actor);
+		e.setTransition(new FadeOutIn(resName, true));
+		lastMonitorable = e;
 	}
 	
 	/**
@@ -274,7 +282,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 * @return
 	 */
 	public boolean isDrawing() {
-		return !textBox.isDone();
+		return lastMonitorable.isBusy();
 	}
 	
 	/**
@@ -288,17 +296,6 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 * Render each frame of the game here
 	 */
 	public void mainLoop() {
-		/**
-		 * Test code
-		 * Remove from final version
-		 */
-		/*
-		changeScene("hallway");
-		addActor("girlchan", "right");
-		changeActorMood("girlchan", "default");
-		setText("HELP","Press 'a' to change actor mood and 's' to change the scene.");
-		*/
-		
 		// Run the main loop
 		while (running) {
 			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();
@@ -323,36 +320,6 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 			System.out.println("ENTER PRESSED!");
 			this.skip();
 			break;
-		/*
-		case 'a':
-			// Test code
-			System.out.println("INDEX: " + moodIndex);
-			System.out.println("MOOD:  " + moods[moodIndex]);
-			
-			moodIndex++;
-			if (moodIndex >= moods.length) {
-				moodIndex = 0;
-			}
-			changeActorMood("girlchan", moods[moodIndex]);
-			setText("girl-chan: ", String.format("I am <b>%s</b>!", moods[moodIndex]));
-			break;
-		case 's':
-			// Test code
-			System.out.println("INDEX: " + moodIndex);
-			System.out.println("MOOD:  " + moods[moodIndex]);
-			
-			sceneIndex++;
-			if (sceneIndex >= scenes.length) {
-				sceneIndex = 0;
-			}
-			changeScene(scenes[sceneIndex]);
-			changeActorMood("girlchan", "embarrassed");
-			setText("girl-chan: ", String.format("How did we just move to the <b>%s</b>?", scenes[sceneIndex]));
-			break;
-		case 'h':
-			setText("HELP", "Press 'a' to change actor mood and 's' to change the scene.");
-			break;
-		*/
 		}
 	}
 

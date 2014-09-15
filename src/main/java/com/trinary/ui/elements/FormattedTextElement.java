@@ -17,7 +17,7 @@ import com.text.formatted.elements.TextInsert;
 import com.trinary.ui.config.ConfigHolder;
 import com.trinary.ui.config.ResourceStore;
 
-public class FormattedTextElement extends ResourceElement {
+public class FormattedTextElement extends ResourceElement implements Monitorable {
 	protected MixedMediaTextBlock mmtb;
 	protected Font defaultFont = new Font("optima", Font.PLAIN, 16);
 	protected Color defaultFontColor = Color.black;
@@ -357,5 +357,10 @@ public class FormattedTextElement extends ResourceElement {
 		abs.y += this.getMarginY();
 		
 		return abs;
+	}
+
+	@Override
+	public boolean isBusy() {
+		return !isDone();
 	} 
 }
