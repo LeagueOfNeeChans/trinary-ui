@@ -14,6 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
+import javax.xml.bind.JAXBException;
 
 import com.text.formatted.elements.PositionedElement;
 import com.trinary.ui.config.ConfigHolder;
@@ -25,6 +26,7 @@ import com.trinary.ui.elements.FormattedTextElement;
 import com.trinary.ui.elements.UIElement;
 import com.trinary.ui.transitions.FadeOutIn;
 import com.trinary.util.EventCallback;
+import com.trinary.util.LayoutLoader;
 import com.trinary.util.Location;
 
 public class UICore implements KeyListener, MouseListener, MouseMotionListener {
@@ -61,6 +63,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	/**
 	 * Setup our Visual Novel UI
 	 */
+	@SuppressWarnings("restriction")
 	public UICore() {
 		// Set up Java container
 		frame = new JFrame("League of Nee-chans");
@@ -92,12 +95,23 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 		
 		// Create our UI container
 		container = new ContainerElement(frame);
+		container.setzIndex(-1);
+		
+		/*
+		try {
+			container = LayoutLoader.processLayout("vn-ui.xml");
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
 		
 		// Create background (scene)
 		scene = container.addChild(AnimatedElement.class);
-		scene.changeResource("_black", false);
+		scene.changeResource("vn.scenes.classroom", false);
 		scene.setWidthP(1.0);
 		scene.setHeightP(1.0);
+		scene.setzIndex(0);
 		
 		// Create text box
 		textBox = container.addChild(FormattedTextElement.class);
@@ -131,10 +145,6 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 		choiceBox.setzIndex(9999);
 		
 		container.sortChildrenByZIndex();
-		
-		for (UIElement e : container.getChildren()) {
-			System.out.println("Z-INDEX: " + e.getzIndex());
-		}
 		
 		// Set up actor positions
 		actorPositions.put("right", new ActorPosition("right: 100%, bottom: 100%", 1, 1.0));
@@ -337,16 +347,6 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 		
 		// Run the main loop
 		while (running) {
-			
-			if (textBox.isSkipped()) { // If the textBox is done rendering...
-				
-				// Skip to the next screen of dialog if auto play is enabled
-				if (ConfigHolder.getConfig("autoPlay") != null) {
-					// TODO attempt to put a delay here
-					skip();
-				}
-			}
-			
 			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();
 			g.drawImage(container.render(), null, 0, 0);
 			

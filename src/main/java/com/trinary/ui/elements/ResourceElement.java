@@ -33,10 +33,10 @@ public class ResourceElement extends ContainerElement {
 	public void changeResource(String name, Boolean perserveDimensions) {
 		Resource r = ResourceStore.getResource(name);
 		
-		System.out.println("CHANGING RESOURCE TO " + name);
+		System.out.println("START CHANGING RESOURCE TO " + name);
 		
 		if (r == null) {
-			System.out.println("CAN'T FIND RESOURCE WITH NAME " + name);
+			//System.out.println("CAN'T FIND RESOURCE WITH NAME " + name);
 			return;
 		}
 		
@@ -48,6 +48,7 @@ public class ResourceElement extends ContainerElement {
 		}
 		
 		refreshLayer();
+		System.out.println("DONE CHANGING RESOURCE TO " + name);
 	}
 	
 	public void scale(float percent) {

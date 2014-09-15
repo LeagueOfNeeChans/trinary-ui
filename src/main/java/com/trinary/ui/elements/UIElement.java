@@ -42,6 +42,7 @@ public abstract class UIElement implements Comparable<UIElement> {
 			
 			return child;
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return null;
 		}
 	}

@@ -42,12 +42,6 @@ public class Location {
 				if (match.group(2) != null) {
 					type = match.group(2);
 				}
-				
-				System.out.println(String.format(""
-						+ "NUMBER: %d\n"
-						+ "TYPE:   %s",
-						number,
-						type));
 			} else {
 				return;
 			}
@@ -72,10 +66,6 @@ public class Location {
 				right = position;
 				break;
 			}
-			
-			
-			
-			System.out.println("IS PERCENTAGE: " + isPercentage);
 		}
 	}
 	

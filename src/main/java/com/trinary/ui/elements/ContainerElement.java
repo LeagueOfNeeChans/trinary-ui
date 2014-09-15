@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 
 import javax.imageio.ImageIO;
 
@@ -18,7 +17,7 @@ import com.trinary.ui.config.ConfigHolder;
 
 public class ContainerElement extends UIElement {
 	public ContainerElement() {
-		super(0, 0, 0, 0);
+		this(0, 0, 0, 0);
 	}
 	
 	public ContainerElement(Container container) {
@@ -27,10 +26,12 @@ public class ContainerElement extends UIElement {
 	
 	public ContainerElement(int x, int y, int width, int height) {
 		super(x, y, width, height);
-		this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = this.surface.createGraphics();
-		g.setComposite(AlphaComposite.Clear);
-		g.fillRect(0, 0, width, height);
+		if (width != 0 && height != 0) {
+			this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = this.surface.createGraphics();
+			g.setComposite(AlphaComposite.Clear);
+			g.fillRect(0, 0, width, height);
+		}
 	}
 	
 	public ContainerElement(int x, int y, int width, int height, Color color) {
@@ -76,14 +77,21 @@ public class ContainerElement extends UIElement {
 	public void refreshLayer() {
 		BufferedImage bi = this.bi;
 		
-		this.bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		System.out.println("REFRESH LAYER");
+		System.out.println(width + "X" + height);
 		
-		Graphics2D g = this.bi.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		
-		g.drawImage(bi, 0, 0, width, height, null);
+		if (width != 0 && height != 0) {
+			System.out.println("REFRESHING LAYER");
+			
+			this.bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			this.surface = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			
+			Graphics2D g = this.bi.createGraphics();
+	        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+	        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			
+			g.drawImage(bi, 0, 0, width, height, null);
+		}
 	}
 	
 	public void setLayer(String filename) {
