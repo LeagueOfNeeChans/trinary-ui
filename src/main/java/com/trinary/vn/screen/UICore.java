@@ -91,7 +91,7 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 		ResourceStore.addFolder("vn");
 		
 		try {
-			container = LayoutLoader.processLayout("vn-ui.xml");
+			container = LayoutLoader.processLayout("layout.xml");
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
