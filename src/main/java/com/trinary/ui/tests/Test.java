@@ -6,13 +6,12 @@ package com.trinary.ui.tests;
 
 import com.trinary.vn.screen.UICore;
 
-
 /**
  *
  * @author Michael
  */
 public class Test {
     public static void main(String[] args) {
-    	new UICore().mainLoop();
+    	new UICore();
     }
 }

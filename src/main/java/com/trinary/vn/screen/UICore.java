@@ -58,19 +58,52 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	// Callback for marked functions
 	private EventCallback callback = null;
 	
+	// Rendering thread
+	private Thread renderThread = new Thread() {
+		@Override
+		public void run() {
+			mainLoop();
+		}
+	};
+	
 	/**
 	 * Setup our Visual Novel UI
 	 */
-	public UICore() {
+	public UICore() {		
+		this("layout.xml");
+	}
+	
+	public UICore(String layoutFile) {
+		// Configure UI and add resources
+		ConfigHolder.setConfig("rootDirectory", "resources/");
+		ResourceStore.addFolder("vn");
+		
+		try {
+			container = LayoutLoader.processLayout(layoutFile);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		
+		container.sortChildrenByZIndex();
+		
+		scene     = (AnimatedElement)ContainerElement.getElementByName("scene");
+		curtain   = (ResourceElement)ContainerElement.getElementByName("curtain");
+		textBox   = (FormattedTextElement)ContainerElement.getElementByName("textBox");
+		choiceBox = (ChoiceBox)ContainerElement.getElementByName("choiceBox");
+		
+		// Set up actor positions
+		actorPositions.put("right", new ActorPosition("right: 100%, bottom: 100%", 1, 1.0));
+		actorPositions.put("left",  new ActorPosition("left:  0%, bottom: 100%", 1, 1.0));
+		
 		// Set up Java container
 		frame = new JFrame("League of Nee-chans");
-		frame.setPreferredSize(new Dimension(800, 600));
+		frame.setPreferredSize(new Dimension(container.getWidth(), container.getHeight()));
 		frame.addKeyListener(this);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
 		// Set up drawing surface
 		canvas = new Canvas();
-		canvas.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
+		canvas.setPreferredSize(new Dimension(container.getWidth(), container.getHeight()));
 		canvas.setVisible(true);
 		canvas.setFocusable(false);
 		canvas.addMouseListener(this);
@@ -86,26 +119,27 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 		canvas.createBufferStrategy(2);
 		strategy = canvas.getBufferStrategy();
 		
-		// Configure UI and add resources
-		ConfigHolder.setConfig("rootDirectory", "resources/");
-		ResourceStore.addFolder("vn");
+		// Start the thread
+		renderThread.start();
+	}
+	
+	/**
+	 * Render each frame of the game here
+	 */
+	protected void mainLoop() {
+		Graphics2D g = (Graphics2D)strategy.getDrawGraphics();
 		
-		try {
-			container = LayoutLoader.processLayout("layout.xml");
-		} catch (JAXBException e) {
-			e.printStackTrace();
+		// Run the main loop
+		while (running) {
+			paint(g);
 		}
+	}
+	
+	protected void paint(Graphics2D g) {
+		g.drawImage(container.render(), null, 0, 0);
 		
-		container.sortChildrenByZIndex();
-		
-		scene     = (AnimatedElement)ContainerElement.getElementByName("scene");
-		curtain   = (ResourceElement)ContainerElement.getElementByName("curtain");
-		textBox   = (FormattedTextElement)ContainerElement.getElementByName("textBox");
-		choiceBox = (ChoiceBox)ContainerElement.getElementByName("choiceBox");
-		
-		// Set up actor positions
-		actorPositions.put("right", new ActorPosition("right: 100%, bottom: 100%", 1, 1.0));
-		actorPositions.put("left",  new ActorPosition("left:  0%, bottom: 100%", 1, 1.0));
+		strategy.show();
+		try { Thread.sleep(10); } catch (Exception e) {}
 	}
 	
 	/**
@@ -290,20 +324,6 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 */
 	public void setCallback(EventCallback c) {
 		callback = c;
-	}
-	
-	/**
-	 * Render each frame of the game here
-	 */
-	public void mainLoop() {
-		// Run the main loop
-		while (running) {
-			Graphics2D g = (Graphics2D)strategy.getDrawGraphics();
-			g.drawImage(container.render(), null, 0, 0);
-			
-			strategy.show();
-			try { Thread.sleep(10); } catch (Exception e) {}
-		}
 	}
 
 	/**
