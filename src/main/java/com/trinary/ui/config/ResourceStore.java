@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.trinary.parse.xml.Formatting;
@@ -94,4 +95,8 @@ public class ResourceStore {
     	
     	return color;
     }
+
+	public static ArrayList<Resource> getResources() {
+		return (ArrayList<Resource>)resources.values();
+	}
 }

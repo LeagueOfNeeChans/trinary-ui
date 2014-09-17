@@ -25,6 +25,7 @@ import com.trinary.ui.elements.ContainerElement;
 import com.trinary.ui.elements.FormattedTextElement;
 import com.trinary.ui.elements.Monitorable;
 import com.trinary.ui.elements.ResourceElement;
+import com.trinary.ui.transitions.FadeOut;
 import com.trinary.ui.transitions.FadeOutIn;
 import com.trinary.util.EventCallback;
 import com.trinary.util.LayoutLoader;
@@ -160,6 +161,8 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 	 * @param position
 	 */
 	public void addActor(String name, String position) {
+		System.out.println("ADDING ACTOR " + name + " TO POSITION " + position);
+		
 		ActorPosition pos = actorPositions.get(position);
 		if (pos == null) {
 			return;
@@ -188,6 +191,26 @@ public class UICore implements KeyListener, MouseListener, MouseMotionListener {
 		actor.changeResource(resName, true);
 		
 		actors.put(name, actor);
+	}
+	
+	/**
+	 * Remove the named actor
+	 * 
+	 * @param name
+	 */
+	public void removeActor(String name) {
+		System.out.println("ATTEMPTING TO REMOVE ACTOR " + name);
+		
+		AnimatedElement actor = actors.get(name);
+		
+		if (actor == null) {
+			System.out.println("UNABLE TO FIND ACTOR WITH NAME: " + name);
+			return;
+		}
+		
+		// Need to mark for deletion
+		actor.setTransition(new FadeOut(true));
+		lastMonitorable = actor;
 	}
 	
 	/**
