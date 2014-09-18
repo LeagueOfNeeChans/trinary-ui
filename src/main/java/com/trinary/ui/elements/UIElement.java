@@ -27,6 +27,9 @@ public abstract class UIElement implements Comparable<UIElement> {
 	protected UIElement parent = null;
 	protected ArrayList<UIElement> children = new ArrayList<>();
 	
+	// Flags
+	protected Boolean markedForDeletion = false;
+	
 	public UIElement() {
 		// TODO Auto-generated constructor stub
 	}
@@ -257,6 +260,18 @@ public abstract class UIElement implements Comparable<UIElement> {
 				y > this.getAbsolute().y &&
 				x < this.getAbsolute().x + this.width &&
 				y < this.getAbsolute().y + this.height;
+	}
+	
+	public void markForDeletion() {
+		this.markedForDeletion = true;
+	}
+	
+	protected void delete() {
+		this.parent.children.remove(this);	
+		
+		for (UIElement element : children) {
+			element.delete();
+		}
 	}
 
 	public abstract BufferedImage render();

@@ -172,6 +172,10 @@ public class ContainerElement extends UIElement {
 	}
 	
 	public void renderChildren() {
+		if (this.markedForDeletion) {
+			this.delete();
+		}
+		
 		synchronized(children) {
 			for (UIElement element : children) {
 				BufferedImage ebi = element.render();
