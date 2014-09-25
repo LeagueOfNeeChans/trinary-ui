@@ -8,14 +8,14 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 
-import com.text.formatted.elements.ImageInsert;
-import com.text.formatted.elements.MarkupElement;
-import com.text.formatted.elements.MixedMediaText;
-import com.text.formatted.elements.MixedMediaTextBlock;
-import com.text.formatted.elements.PositionedElement;
-import com.text.formatted.elements.TextInsert;
 import com.trinary.parse.xml.Formatting;
 import com.trinary.parse.xml.FormattingType;
+import com.trinary.text.ImageInsert;
+import com.trinary.text.MarkupElement;
+import com.trinary.text.MixedMediaText;
+import com.trinary.text.MixedMediaTextBlock;
+import com.trinary.text.PositionedElement;
+import com.trinary.text.TextInsert;
 import com.trinary.ui.config.ConfigHolder;
 import com.trinary.ui.config.ResourceStore;
 

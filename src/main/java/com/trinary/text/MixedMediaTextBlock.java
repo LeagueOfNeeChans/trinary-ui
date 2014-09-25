@@ -1,4 +1,4 @@
-package com.text.formatted.elements;
+package com.trinary.text;
 
 import java.util.ArrayList;
 
