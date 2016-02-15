@@ -188,12 +188,16 @@ public class ContainerElement extends UIElement {
 		        
 		        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, new Float(element.transparency));
 		        g.setComposite(comp);
-		        g.drawImage(ebi, null, element.getX(), element.getY());
+		        g.drawImage(ebi, null, element.getXScaled(), element.getYScaled());
 			}
 		}
 	}
 	
 	public BufferedImage render() {
+		return renderScaled(null, null);
+    }
+	
+	public BufferedImage renderScaled(Double scaleX, Double scaleY) {
 		Graphics2D g = surface.createGraphics();
 		BufferedImage adjusted = bi;
 		
@@ -202,11 +206,27 @@ public class ContainerElement extends UIElement {
 			RescaleOp op = new RescaleOp(new Float(brightness), 0, null);
 			adjusted = op.filter(bi, null);
 		}
-		
+
 		g.drawImage(adjusted, null, 0, 0);
 		
         this.renderChildren();
         
+        if (scaleX != null && scaleY != null) {
+	        Integer scaledWidth = (int)Math.round(width * scaleX);
+			Integer scaledHeight = (int)Math.round(height * scaleY);
+			BufferedImage scaledImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_ARGB);
+			
+			Graphics2D gs = (Graphics2D) scaledImage.getGraphics();
+			gs.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+		            RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		    gs.setRenderingHint(RenderingHints.KEY_RENDERING,
+		            RenderingHints.VALUE_RENDER_QUALITY);
+		    gs.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+		            RenderingHints.VALUE_ANTIALIAS_ON);
+			gs.drawImage(this.surface, 0, 0, scaledWidth, scaledHeight, null);
+			return scaledImage;
+        }
+		
         return this.surface;
     }
 	

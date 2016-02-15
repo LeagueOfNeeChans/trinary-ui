@@ -9,7 +9,7 @@ public class AnimatedElement extends ResourceElement implements Monitorable {
 	
 	@Override
 	public BufferedImage render() {
-		super.render();
+		surface = super.render();
 
 		if (transition != null) {
 			transition.step(this);

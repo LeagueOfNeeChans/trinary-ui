@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
-
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import javax.xml.bind.JAXBException;
@@ -21,7 +20,6 @@ import com.trinary.ui.elements.Monitorable;
 import com.trinary.util.EventCallback;
 import com.trinary.util.LayoutLoader;
 
-@SuppressWarnings("restriction")
 public abstract class UI implements KeyListener, MouseListener, MouseMotionListener {
 	// Java UI Elements
 	protected JFrame frame;
@@ -33,6 +31,9 @@ public abstract class UI implements KeyListener, MouseListener, MouseMotionListe
 	
 	// Trinary UI Elements
 	protected ContainerElement container;
+	protected Dimension nativeResolution;
+	protected Double currentScaleX = 1.0;
+	protected Double currentScaleY = 1.0;
 	
 	// Last monitorable
 	protected Monitorable lastMonitorable;
@@ -118,14 +119,38 @@ public abstract class UI implements KeyListener, MouseListener, MouseMotionListe
 	 */
 	protected abstract void customSetup();
 	
+	public void resizeUI(Integer newWidth, Integer newHeight) {
+		if (newWidth != null) {
+			currentScaleX = ((double)newWidth/(double)nativeResolution.getWidth());
+		}
+		
+		if (newHeight != null) {
+			currentScaleY = ((double)newHeight/(double)nativeResolution.getHeight());
+		}
+		
+		resizeSwing((int)Math.round(currentScaleX * nativeResolution.getWidth()), (int)Math.round(currentScaleY * nativeResolution.getHeight()));
+	}
+	
+	public void scaleUI(Double scale) {
+		currentScaleX = currentScaleY = scale;
+		resizeSwing((int)Math.round(currentScaleX * nativeResolution.getWidth()), (int)Math.round(currentScaleY * nativeResolution.getHeight()));
+	}
+	
+	public void scaleUI(Double scaleX, Double scaleY) {
+		currentScaleX = scaleX;
+		currentScaleY = scaleY;
+		resizeSwing((int)Math.round(currentScaleX * nativeResolution.getWidth()), (int)Math.round(currentScaleY * nativeResolution.getHeight()));
+	}
+	
 	public UI() {
 		this("layout.xml");
 	}
 	
 	public UI(int width, int height) {		
 		loadResources();
-		
+	
 		container = new ContainerElement(0, 0, width, height);
+		nativeResolution = new Dimension(container.getWidth(), container.getHeight());
 		
 		setupSwing();
 		refreshSwing();
@@ -144,6 +169,7 @@ public abstract class UI implements KeyListener, MouseListener, MouseMotionListe
 			e.printStackTrace();
 		}
 		
+		nativeResolution = new Dimension(container.getWidth(), container.getHeight());
 		container.sortChildrenByZIndex();
 		
 		setupSwing();
@@ -174,7 +200,7 @@ public abstract class UI implements KeyListener, MouseListener, MouseMotionListe
 	 * @param g
 	 */
 	protected void paint(Graphics2D g) {
-		g.drawImage(container.render(), null, 0, 0);
+		g.drawImage(container.renderScaled(currentScaleX, currentScaleY), null, 0, 0);
 	}
 	
 	/**

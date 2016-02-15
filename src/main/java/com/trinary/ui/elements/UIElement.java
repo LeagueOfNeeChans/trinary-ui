@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 import com.trinary.util.Location;
 
@@ -12,6 +11,7 @@ public abstract class UIElement implements Comparable<UIElement> {
 	protected String id;
 	
 	protected Location pos = new Location();
+	protected float scale = 1.0f;
 	protected int width, height;
 	protected int zIndex = -1;
 	
@@ -53,6 +53,18 @@ public abstract class UIElement implements Comparable<UIElement> {
 		}
 	}
 	
+	public void setScale(float scale) {
+		this.scale = scale;
+		for (UIElement element : children) {
+			element.setScale(scale);
+		}
+	}
+	
+	public void scaleElement(float scale) {
+		float newScale = scale * this.scale;
+		setScale(newScale);
+	}
+
 	public void addChild(UIElement child) {
 		child.parent = this;
 		this.children.add(child);
@@ -76,6 +88,22 @@ public abstract class UIElement implements Comparable<UIElement> {
 
 	public void setvAlign(String vAlign) {
 		this.vAlign = vAlign;
+	}
+	
+	public int getXScaled() {
+		return Math.round(scale * getX());
+	}
+	
+	public int getYScaled() {
+		return Math.round(scale * getY());
+	}
+	
+	public int getWidthScaled() {
+		return Math.round(scale * getWidth());
+	}
+	
+	public int getHeightScaled() {
+		return Math.round(scale * getHeight());
 	}
 
 	public int getX() {
@@ -258,8 +286,8 @@ public abstract class UIElement implements Comparable<UIElement> {
 	public boolean rectangleContains(int x, int y) {
 		return  x > this.getAbsolute().x &&
 				y > this.getAbsolute().y &&
-				x < this.getAbsolute().x + this.width &&
-				y < this.getAbsolute().y + this.height;
+				x < this.getAbsolute().x + this.getWidthScaled() &&
+				y < this.getAbsolute().y + this.getHeightScaled();
 	}
 	
 	public void markForDeletion() {

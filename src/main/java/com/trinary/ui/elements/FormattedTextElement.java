@@ -56,6 +56,10 @@ public class FormattedTextElement extends ResourceElement implements Monitorable
     public int getMarginX() {
 		return marginX;
 	}
+    
+	public int getMarginXScaled() {
+		return Math.round(scale * getMarginX());
+	}
 
 	public void setMarginX(int marginX) {
 		this.marginX = marginX;
@@ -67,6 +71,10 @@ public class FormattedTextElement extends ResourceElement implements Monitorable
 
 	public int getMarginY() {
 		return marginY;
+	}
+	
+	public int getMarginYScaled() {
+		return Math.round(scale * getMarginY());
 	}
 
 	public void setMarginY(int marginY) {
@@ -99,7 +107,7 @@ public class FormattedTextElement extends ResourceElement implements Monitorable
         
         ArrayList<MixedMediaText> lines = new ArrayList<>();
         
-        int maxWidth = (this.width - marginX * 2);
+        int maxWidth = (this.getWidthScaled() - marginX * 2);
         
         for (MarkupElement element : text.getElements()) {
             if (element instanceof ImageInsert) {
@@ -130,7 +138,7 @@ public class FormattedTextElement extends ResourceElement implements Monitorable
                     lastIcon = line.popElement();
                 }
                 
-                line.setWidth(this.width);
+                line.setWidth(this.getWidthScaled());
                 line.setHeight(height);
                 line.setParent(this);
                 
@@ -168,7 +176,7 @@ public class FormattedTextElement extends ResourceElement implements Monitorable
             }
         }
         
-        line.setWidth(this.width);
+        line.setWidth(this.getWidthScaled());
         line.setHeight(height);
         line.setParent(this);
         
@@ -211,11 +219,11 @@ public class FormattedTextElement extends ResourceElement implements Monitorable
             // Debugging lines
             if (ConfigHolder.getConfig("debug") != null) {
                 g.setColor(Color.GREEN);
-                g.drawLine(0, textBottom, this.width, textBottom);
+                g.drawLine(0, textBottom, this.getWidthScaled(), textBottom);
                 g.setColor(Color.BLUE);
-                g.drawLine(0, textBottom - fm.getAscent(), this.width, textBottom - fm.getAscent());
+                g.drawLine(0, textBottom - fm.getAscent(), this.getWidthScaled(), textBottom - fm.getAscent());
                 g.setColor(Color.RED);
-                g.drawLine(0, textBottom - (fm.getAscent() - fm.getDescent()), this.width, textBottom - (fm.getAscent() - fm.getDescent()));
+                g.drawLine(0, textBottom - (fm.getAscent() - fm.getDescent()), this.getWidthScaled(), textBottom - (fm.getAscent() - fm.getDescent()));
             }
             
             g.setColor(this.defaultFontColor);
@@ -224,14 +232,14 @@ public class FormattedTextElement extends ResourceElement implements Monitorable
             int startX;
             switch (this.alignment) {
                 case "right":
-                    startX = (this.width - this.marginX - mmt.getWidth());
+                    startX = (this.getWidthScaled() - this.getMarginXScaled() - mmt.getWidth());
                     break;
                 case "center":
-                    startX = this.marginX + (this.width - mmt.getWidth())/2;
+                    startX = this.getMarginXScaled() + (this.getWidthScaled() - mmt.getWidth())/2;
                     break;
                 case "left":
                 default:
-                    startX = this.marginX;
+                    startX = this.getMarginXScaled();
                     break;
             }
             
@@ -353,8 +361,8 @@ public class FormattedTextElement extends ResourceElement implements Monitorable
 	public Point getAbsolute() {
 		Point abs = super.getAbsolute();
 		
-		abs.x += this.getMarginX();
-		abs.y += this.getMarginY();
+		abs.x += this.getMarginXScaled();
+		abs.y += this.getMarginYScaled();
 		
 		return abs;
 	}
